@@ -135,3 +135,46 @@ class NexusNMT(nn.Module):
             dec_output = dec_layer(dec_output, enc_output, src_mask, tgt_mask)
         output = self.fc_out(dec_output)
         return output
+
+    @torch.no_grad()
+    def generate(self, src, bos_id, eos_id, pad_id, max_len=30, repetition_penalty=2.0):
+        self.eval()
+        # Encode source
+        src_mask = (src != 0).unsqueeze(1).unsqueeze(2)
+        src_embedded = self.positional_encoding(self.src_embedding(src) * self.scale)
+        enc_output = src_embedded
+        for enc_layer in self.encoder_layers:
+            enc_output = enc_layer(enc_output, src_mask)
+            
+        tgt = torch.tensor([[bos_id]], dtype=torch.long).to(src.device)
+        
+        for _ in range(max_len):
+            tgt_mask = (tgt != 0).unsqueeze(1).unsqueeze(3)
+            seq_length = tgt.size(1)
+            nopeak_mask = (1 - torch.triu(torch.ones(1, seq_length, seq_length), diagonal=1)).bool().to(tgt.device)
+            tgt_mask = tgt_mask & nopeak_mask
+            
+            tgt_embedded = self.positional_encoding(self.tgt_embedding(tgt) * self.scale)
+            dec_output = tgt_embedded
+            for dec_layer in self.decoder_layers:
+                dec_output = dec_layer(dec_output, enc_output, src_mask, tgt_mask)
+                
+            output = self.fc_out(dec_output)
+            logits = output[0, -1, :].clone()
+            
+            # Block BOS and PAD
+            logits[bos_id] = -float('inf')
+            logits[pad_id] = -float('inf')
+            
+            # 🚨 REPETITION PENALTY: Penalize tokens we have already generated
+            for token in set(tgt[0].tolist()):
+                if token not in [bos_id, pad_id]:
+                    logits[token] /= repetition_penalty
+            
+            next_token = logits.argmax().item()
+            
+            tgt = torch.cat([tgt, torch.tensor([[next_token]], device=tgt.device)], dim=1)
+            if next_token == eos_id:
+                break
+                
+        return tgt[0].tolist()
