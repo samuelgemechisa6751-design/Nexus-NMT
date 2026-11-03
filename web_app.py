@@ -122,7 +122,7 @@ def load_model():
 model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC
+# 3. TRANSLATION LOGIC (STRICT PUNCTUATION BAN)
 # ==========================================
 def translate(text):
     src_text = f"<2am> {text}"
@@ -145,14 +145,20 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban only <s> and <pad>
+            # Ban special tokens
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
 
-            # Repetition penalty
+            # 🚨 BAN ALL PUNCTUATION AND SPACES 🚨
+            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
+                token_id = tokenizer.token_to_id(punct)
+                if token_id is not None:
+                    logits[token_id] = -float('inf')
+
+            # Heavy repetition penalty
             for token in set(tgt_ids):
                 if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
-                    logits[token] -= 2.0
+                    logits[token] -= 10.0
             
             next_token = logits.argmax().item()
             tgt_ids.append(next_token)
