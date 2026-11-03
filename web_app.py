@@ -10,7 +10,7 @@ st.title("🌍 Nexus-NMT: English to Amharic")
 st.write("A 200M parameter Transformer built from scratch.")
 
 # ==========================================
-# 1. DEFINE MODEL ARCHITECTURE
+# 1. DEFINE MODEL ARCHITECTURE (FLOAT16 SAFE)
 # ==========================================
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
@@ -23,7 +23,8 @@ class MultiHeadAttention(nn.Module):
         K = self.W_k(k).view(k.size(0), k.size(1), self.num_heads, self.d_k).transpose(1, 2)
         V = self.W_v(v).view(v.size(0), v.size(1), self.num_heads, self.d_k).transpose(1, 2)
         attn = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
-        if mask is not None: attn = attn.masked_fill(mask == 0, -1e9)
+        # 🚨 FIXED: Using -1e4 instead of -1e9 to prevent float16 overflow
+        if mask is not None: attn = attn.masked_fill(mask == 0, -1e4)
         out = torch.matmul(torch.softmax(attn, dim=-1), V)
         return self.W_o(out.transpose(1, 2).contiguous().view(q.size(0), q.size(1), self.d_model))
 
@@ -96,19 +97,18 @@ class NexusNMT(nn.Module):
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    
     tokenizer_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="vocab.json")
     tokenizer = ByteLevelBPETokenizer(tokenizer_path, hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="merges.txt"))
     
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # 🚨 LOAD THE COMPRESSED LITE MODEL 🚨
+    # Load the compressed lite model
     weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_16000_lite.pt") 
     
     state_dict = torch.load(weights_path, map_location=device)
     model.load_state_dict(state_dict)
-    model = model.half()  # <--- CONVERT TO HALF-PRECISION
+    model = model.half()  # Convert to half-precision
     model.eval()
     return model, tokenizer, device
 
@@ -143,6 +143,7 @@ def translate(text):
             if tokenizer.token_to_id(".") is not None:
                 logits[tokenizer.token_to_id(".")] = -float('inf')
 
+            # Repetition penalty
             for token in set(tgt_ids):
                 if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
                     logits[token] -= 3.0
