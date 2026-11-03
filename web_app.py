@@ -6,7 +6,7 @@ from huggingface_hub import hf_hub_download
 from tokenizers import ByteLevelBPETokenizer
 
 st.set_page_config(page_title="Nexus-NMT Translator", page_icon="🌍")
-st.title("🌍 Nexus-NMT: English to Amharic")
+st.title("🌍 Nexus-NMT")
 st.write("A 200M parameter Transformer built from scratch.")
 
 # ==========================================
