@@ -102,7 +102,7 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_6000.pt") 
+    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_10000.pt") 
     model.load_state_dict(torch.load(weights_path, map_location=device))
     model.eval()
     return model, tokenizer, device
