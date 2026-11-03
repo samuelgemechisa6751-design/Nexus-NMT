@@ -23,7 +23,6 @@ class MultiHeadAttention(nn.Module):
         K = self.W_k(k).view(k.size(0), k.size(1), self.num_heads, self.d_k).transpose(1, 2)
         V = self.W_v(v).view(v.size(0), v.size(1), self.num_heads, self.d_k).transpose(1, 2)
         attn = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
-        # 🚨 FIXED: Using -1e4 instead of -1e9 to prevent float16 overflow
         if mask is not None: attn = attn.masked_fill(mask == 0, -1e4)
         out = torch.matmul(torch.softmax(attn, dim=-1), V)
         return self.W_o(out.transpose(1, 2).contiguous().view(q.size(0), q.size(1), self.d_model))
@@ -115,7 +114,7 @@ def load_model():
 model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC
+# 3. TRANSLATION LOGIC (ANTI-LOOP)
 # ==========================================
 def translate(text):
     src_text = f"<2am> {text}"
@@ -138,15 +137,20 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
+            # 🚨 BAN PUNCTUATION AND SPECIAL TOKENS 🚨
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
-            if tokenizer.token_to_id(".") is not None:
-                logits[tokenizer.token_to_id(".")] = -float('inf')
+            
+            # Ban common punctuation tokens
+            for punct in [",", ".", " ", "\n", "።", "፣"]:
+                token_id = tokenizer.token_to_id(punct)
+                if token_id is not None:
+                    logits[token_id] = -float('inf')
 
-            # Repetition penalty
+            # 🚨 HEAVY REPETITION PENALTY 🚨
             for token in set(tgt_ids):
                 if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
-                    logits[token] -= 3.0
+                    logits[token] -= 10.0  # Very strong penalty
             
             next_token = logits.argmax().item()
             tgt_ids.append(next_token)
