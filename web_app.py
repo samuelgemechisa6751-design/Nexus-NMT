@@ -96,7 +96,6 @@ class NexusNMT(nn.Module):
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    # 🚨 Make sure your username is correct here! 🚨
     tokenizer_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="vocab.json")
     tokenizer = ByteLevelBPETokenizer(tokenizer_path, hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="merges.txt"))
     
@@ -111,7 +110,7 @@ def load_model():
 model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC
+# 3. TRANSLATION LOGIC (WITH ANTI-LOOP FIXES)
 # ==========================================
 def translate(text):
     src_text = f"<2am> {text}"
@@ -133,8 +132,17 @@ def translate(text):
             for layer in model.decoder_layers: dec_out = layer(dec_out, enc_out, src_mask, tgt_mask)
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
+            
+            # Ban bad tokens
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
+            if tokenizer.token_to_id(".") is not None:
+                logits[tokenizer.token_to_id(".")] = -float('inf')
+
+            # Repetition penalty
+            for token in set(tgt_ids):
+                if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
+                    logits[token] -= 2.0
             
             next_token = logits.argmax().item()
             tgt_ids.append(next_token)
