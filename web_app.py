@@ -91,29 +91,31 @@ class NexusNMT(nn.Module):
         return self.fc_out(dec_out)
 
 # ==========================================
-# 2. LOAD MODEL FROM HUGGING FACE (12000)
+# 2. LOAD MODEL FROM HUGGING FACE (LITE VERSION)
 # ==========================================
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
     
-    # Load Tokenizer
     tokenizer_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="vocab.json")
     tokenizer = ByteLevelBPETokenizer(tokenizer_path, hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="merges.txt"))
     
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # 🚨 LOAD THE 12000 BATCH WEIGHTS 🚨
-    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_12000.pt") 
-    model.load_state_dict(torch.load(weights_path, map_location=device))
+    # 🚨 LOAD THE COMPRESSED LITE MODEL 🚨
+    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_16000_lite.pt") 
+    
+    state_dict = torch.load(weights_path, map_location=device)
+    model.load_state_dict(state_dict)
+    model = model.half()  # <--- CONVERT TO HALF-PRECISION
     model.eval()
     return model, tokenizer, device
 
 model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC (WITH ANTI-LOOP FIXES)
+# 3. TRANSLATION LOGIC
 # ==========================================
 def translate(text):
     src_text = f"<2am> {text}"
@@ -136,16 +138,14 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban <s>, <pad>, and period tokens
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
             if tokenizer.token_to_id(".") is not None:
                 logits[tokenizer.token_to_id(".")] = -float('inf')
 
-            # Repetition penalty
             for token in set(tgt_ids):
                 if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
-                    logits[token] -= 2.0
+                    logits[token] -= 3.0
             
             next_token = logits.argmax().item()
             tgt_ids.append(next_token)
