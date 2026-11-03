@@ -103,7 +103,7 @@ def load_model():
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
     # Load the compressed lite model
-    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_16000_lite.pt") 
+    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_26000_lite.pt") 
     
     state_dict = torch.load(weights_path, map_location=device)
     model.load_state_dict(state_dict)
