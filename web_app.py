@@ -91,18 +91,21 @@ class NexusNMT(nn.Module):
         return self.fc_out(dec_out)
 
 # ==========================================
-# 2. LOAD MODEL FROM HUGGING FACE
+# 2. LOAD MODEL FROM HUGGING FACE (12000)
 # ==========================================
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
+    
+    # Load Tokenizer
     tokenizer_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="vocab.json")
     tokenizer = ByteLevelBPETokenizer(tokenizer_path, hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="merges.txt"))
     
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_10000.pt") 
+    # 🚨 LOAD THE 12000 BATCH WEIGHTS 🚨
+    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_12000.pt") 
     model.load_state_dict(torch.load(weights_path, map_location=device))
     model.eval()
     return model, tokenizer, device
@@ -133,7 +136,7 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban bad tokens
+            # Ban <s>, <pad>, and period tokens
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
             if tokenizer.token_to_id(".") is not None:
