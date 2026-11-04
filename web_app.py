@@ -6,7 +6,21 @@ from huggingface_hub import hf_hub_download
 from tokenizers import ByteLevelBPETokenizer
 
 st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
-st.title("🌍 Nexus-NMT")
+
+# ==========================================
+# DISPLAY TREE IMAGE AT THE TOP
+# ==========================================
+# Using a standard web image for the presentation
+IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
+
+try:
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        st.image(IMAGE_URL, use_column_width=True)
+except Exception:
+    st.warning("Could not load image.")
+
+st.title("Nexus-NMT")
 st.write("A 200M parameter Multilingual Transformer built from scratch.")
 
 # ==========================================
@@ -102,10 +116,10 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # Load the 8-bit compressed model
-    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_26000_8bit.pt") 
+    # 🚨 UPDATE THIS FILENAME to the latest 8-bit model on Hugging Face 🚨
+    # e.g., "nexus_batch_54000_8bit.pt"
+    weights_path = hf_hub_download(repo_id="samuel-nexus/Nexus-NMT-Model", filename="nexus_batch_54000_8bit.pt") 
     
-    # Reconstruct the weights from int8 back to float16
     state_dict_8bit = torch.load(weights_path, map_location=device)
     state_dict = {}
     for k, v in state_dict_8bit.items():
@@ -122,7 +136,7 @@ def load_model():
 model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC (STRICT PUNCTUATION BAN)
+# 3. TRANSLATION LOGIC
 # ==========================================
 def translate(text):
     src_text = f"<2am> {text}"
@@ -149,13 +163,13 @@ def translate(text):
             logits[tokenizer.token_to_id("<s>")] = -float('inf')
             logits[tokenizer.token_to_id("<pad>")] = -float('inf')
 
-            # 🚨 BAN ALL PUNCTUATION AND SPACES 🚨
+            # Ban Punctuation and Spaces (Forces real Amharic characters)
             for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
                 token_id = tokenizer.token_to_id(punct)
                 if token_id is not None:
                     logits[token_id] = -float('inf')
 
-            # Heavy repetition penalty
+            # Repetition penalty
             for token in set(tgt_ids):
                 if token not in [tokenizer.token_to_id("<s>"), tokenizer.token_to_id("</s>")]:
                     logits[token] -= 10.0
