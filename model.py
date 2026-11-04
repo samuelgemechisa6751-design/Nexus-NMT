@@ -4,8 +4,6 @@ import math
 import pandas as pd
 from torch.utils.data import Dataset
 
-# NOTE: No "from model import NexusNMT" here! model.py only contains the classes.
-
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
         super().__init__()
