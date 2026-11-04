@@ -62,11 +62,18 @@ class DecoderLayer(nn.Module):
 class NexusNMT(nn.Module):
     def __init__(self, src_vocab_size, tgt_vocab_size):
         super().__init__()
-        self.src_embedding = nn.Embedding(src_vocab_size, 768); self.tgt_embedding = nn.Embedding(tgt_vocab_size, 768)
-        self.positional_encoding = PositionalEncoding(768)
-        self.encoder_layers = nn.ModuleList([EncoderLayer(768, 12, 3072, 0.1) for _ in range(8)])
-        self.decoder_layers = nn.ModuleList([DecoderLayer(768, 12, 3072, 0.1) for _ in range(8)])
-        self.fc_out = nn.Linear(768, tgt_vocab_size); self.dropout = nn.Dropout(0.1); self.scale = math.sqrt(768)
+        # 🚀 60M Model Architecture
+        self.d_model = 512 
+        self.src_embedding = nn.Embedding(src_vocab_size, self.d_model)
+        self.tgt_embedding = nn.Embedding(tgt_vocab_size, self.d_model)
+        self.positional_encoding = PositionalEncoding(self.d_model)
+        
+        self.encoder_layers = nn.ModuleList([EncoderLayer(self.d_model, 8, 2048, 0.1) for _ in range(6)])
+        self.decoder_layers = nn.ModuleList([DecoderLayer(self.d_model, 8, 2048, 0.1) for _ in range(6)])
+        
+        self.fc_out = nn.Linear(self.d_model, tgt_vocab_size)
+        self.dropout = nn.Dropout(0.1)
+        self.scale = math.sqrt(self.d_model)
     
     def generate_mask(self, src, tgt):
         src_mask = (src != 0).unsqueeze(1).unsqueeze(2) 
@@ -85,8 +92,8 @@ class NexusNMT(nn.Module):
         return self.fc_out(dec_out)
 
 class NexusDataset(Dataset):
-    def __init__(self, parquet_path, tokenizer, max_len=128):
-        self.df = pd.read_parquet(parquet_path)
+    def __init__(self, dataframe, tokenizer, max_len=128):
+        self.df = dataframe
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.bos_id = tokenizer.token_to_id("<s>"); self.eos_id = tokenizer.token_to_id("</s>")
