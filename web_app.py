@@ -9,8 +9,14 @@ from model import NexusNMT # Import from model.py
 
 st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
 
-# Securely fetch the Hugging Face token
+# ==========================================
+# SECURE TOKEN FETCH
+# ==========================================
+# This reads the token from the Streamlit Secrets you just set up!
 hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
+
+if not hf_token:
+    st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets. The model may fail to load if the repo is private.")
 
 IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
 try:
@@ -21,7 +27,7 @@ except Exception:
     pass
 
 st.title("Nexus-NMT")
-st.write("A 200M parameter Multilingual Transformer built from scratch.")
+st.write("A 60M parameter Multilingual Transformer built from scratch.")
 
 @st.cache_resource
 def load_model():
@@ -35,8 +41,8 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # 🚨 ENSURE THIS MATCHES YOUR LATEST UPLOADED FILE NAME 🚨
-    weights_path = hf_hub_download(repo_id=repo_id, filename="nexus_batch_54000_8bit.pt", token=hf_token) 
+    # 🚨 Points to the new 60M model uploaded at Batch 6000
+    weights_path = hf_hub_download(repo_id=repo_id, filename="nexus_batch_NEW_8bit.pt", token=hf_token) 
     
     state_dict_8bit = torch.load(weights_path, map_location=device)
     state_dict = {}
@@ -69,8 +75,6 @@ def translate(text):
     if pad_id is None: pad_id = 1
     if tag_2am is None: tag_2am = 3
 
-    # The dataset code uses: [tag_2am] + tokenize(en) + [eos]
-    # So we replicate that exactly here
     src_ids = [tag_2am] + tokenizer.encode(text).ids + [eos_id]
     src_tensor = torch.tensor([src_ids], dtype=torch.long).to(device)
 
@@ -92,12 +96,10 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban only special tokens that shouldn't appear in the middle of text
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # Soft repetition penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
                     logits[token] -= 2.0 
