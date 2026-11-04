@@ -12,8 +12,8 @@ st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
 # ==========================================
 # SECURE TOKEN FETCH
 # ==========================================
-# This reads the token from the Streamlit Secrets you just set up!
-hf_token = st.secrets.get("HF_TOKEN", os.environ.get("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", None))
+# Reads the token from Streamlit Secrets safely
+hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 
 if not hf_token:
     st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets. The model may fail to load if the repo is private.")
