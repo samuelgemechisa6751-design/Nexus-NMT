@@ -4,6 +4,8 @@ import math
 import pandas as pd
 from torch.utils.data import Dataset
 
+# NOTE: No "from model import NexusNMT" here! model.py only contains the classes.
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
         super().__init__()
@@ -106,7 +108,6 @@ class NexusDataset(Dataset):
             src_ids = [self.tag_2en] + self.tokenizer.encode(am).ids + [self.eos_id]
             tgt_ids = [self.bos_id] + self.tokenizer.encode(en).ids + [self.eos_id]
             
-        # Truncate but DO NOT pad here (DataLoader handles padding dynamically)
         src_ids = src_ids[:self.max_len]
         tgt_ids = tgt_ids[:self.max_len]
         
