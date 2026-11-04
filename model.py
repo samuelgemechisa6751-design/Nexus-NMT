@@ -15,7 +15,11 @@ class MultiHeadAttention(nn.Module):
         K = self.W_k(k).view(k.size(0), k.size(1), self.num_heads, self.d_k).transpose(1, 2)
         V = self.W_v(v).view(v.size(0), v.size(1), self.num_heads, self.d_k).transpose(1, 2)
         attn = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
-        if mask is not None: attn = attn.masked_fill(mask == 0, -1e9)
+        
+        # 🚀 FIX: Use torch.finfo to prevent float16 overflow
+        if mask is not None: 
+            attn = attn.masked_fill(mask == 0, torch.finfo(attn.dtype).min)
+            
         out = torch.matmul(torch.softmax(attn, dim=-1), V)
         return self.W_o(out.transpose(1, 2).contiguous().view(q.size(0), q.size(1), self.d_model))
 
