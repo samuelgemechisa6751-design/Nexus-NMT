@@ -94,21 +94,17 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban special tokens
+            # Ban ONLY special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # 🚀 FIX: Ban punctuation and spaces to force real letters
-            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
-                token_id = tokenizer.token_to_id(punct)
-                if token_id is not None:
-                    logits[token_id] = -float('inf')
-
-            # 🚀 FIX: Strong repetition penalty to stop loops
+            # 🚀 FIX: Allow spaces and punctuation! The model needs them to form real words.
+            
+            # Soft repetition penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 15.0 
+                    logits[token] -= 2.0 
             
             next_token = logits.argmax().item()
             
