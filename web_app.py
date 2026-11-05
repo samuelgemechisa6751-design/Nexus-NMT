@@ -9,13 +9,9 @@ from model import NexusNMT
 
 st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
 
-# ==========================================
-# SECURE TOKEN FETCH
-# ==========================================
 hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
-
 if not hf_token:
-    st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets. The model may fail to load if the repo is private.")
+    st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets.")
 
 IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
 try:
@@ -40,7 +36,7 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # ✅ UPDATED: Points to the fully trained model
+    # Points to your final model
     weights_path = hf_hub_download(repo_id=repo_id, filename="my_trained_model_v2.pt", token=hf_token) 
     
     state_dict_8bit = torch.load(weights_path, map_location=device)
@@ -95,15 +91,21 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban ONLY special tokens
+            # Ban special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # Soft repetition penalty
+            # 🚀 RE-ADDED: Ban punctuation to force Amharic letters
+            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
+                token_id = tokenizer.token_to_id(punct)
+                if token_id is not None:
+                    logits[token_id] = -float('inf')
+
+            # 🚀 RE-ADDED: Strong repetition penalty to stop loops
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 2.0 
+                    logits[token] -= 15.0 
             
             next_token = logits.argmax().item()
             if next_token == eos_id:
@@ -111,7 +113,9 @@ def translate(text):
             tgt_ids.append(next_token)
 
     clean_text = tokenizer.decode(tgt_ids, skip_special_tokens=True)
-    return clean_text.strip() if clean_text.strip() else "[Model generated empty response]"
+    clean_text = clean_text.replace("<s>", "").replace("</s>", "").strip()
+    
+    return clean_text if clean_text else "[Model generated empty response]"
 
 user_input = st.text_area("English Text", "Hello, how are you?")
 if st.button("Translate"):
