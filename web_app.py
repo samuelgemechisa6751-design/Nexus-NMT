@@ -36,8 +36,8 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # Points to your final model
-    weights_path = hf_hub_download(repo_id=repo_id, filename="my_trained_model_v2.pt", token=hf_token) 
+    # ✅ UPDATED: Points to the Batch 19000 model
+    weights_path = hf_hub_download(repo_id=repo_id, filename="model_epoch1_batch_19000.pt", token=hf_token) 
     
     state_dict_8bit = torch.load(weights_path, map_location=device)
     state_dict = {}
@@ -91,21 +91,17 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban special tokens
+            # Ban ONLY special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # 🚀 RE-ADDED: Ban punctuation to force Amharic letters
-            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
-                token_id = tokenizer.token_to_id(punct)
-                if token_id is not None:
-                    logits[token_id] = -float('inf')
+            # 🚀 FIX: Removed the punctuation ban so the model can use spaces and commas naturally
 
-            # 🚀 RE-ADDED: Strong repetition penalty to stop loops
+            # Soft repetition penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 15.0 
+                    logits[token] -= 2.0 
             
             next_token = logits.argmax().item()
             if next_token == eos_id:
@@ -113,9 +109,7 @@ def translate(text):
             tgt_ids.append(next_token)
 
     clean_text = tokenizer.decode(tgt_ids, skip_special_tokens=True)
-    clean_text = clean_text.replace("<s>", "").replace("</s>", "").strip()
-    
-    return clean_text if clean_text else "[Model generated empty response]"
+    return clean_text.strip() if clean_text.strip() else "[Model generated empty response]"
 
 user_input = st.text_area("English Text", "Hello, how are you?")
 if st.button("Translate"):
