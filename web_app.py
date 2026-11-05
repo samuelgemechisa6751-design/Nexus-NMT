@@ -36,19 +36,27 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # ✅ UPDATED: Points to the Batch 19000 model
     weights_path = hf_hub_download(repo_id=repo_id, filename="model_epoch1_batch_19000.pt", token=hf_token) 
     
-    state_dict_8bit = torch.load(weights_path, map_location=device)
-    state_dict = {}
+    # 🚀 EXPERT FIX: Handle both raw and 8-bit compressed files
+    checkpoint = torch.load(weights_path, map_location=device)
     
-    for k, v in state_dict_8bit.items():
-        if k.endswith("_scale"):
-            continue
-        scale = state_dict_8bit.get(k + "_scale", 1.0)
-        state_dict[k] = (v.to(torch.float16) * scale)
+    # Check if it's a raw model (contains 'model_state_dict') or compressed (contains '_scale')
+    if "model_state_dict" in checkpoint:
+        print("Loading raw model...")
+        model.load_state_dict(checkpoint["model_state_dict"])
+    elif any(k.endswith("_scale") for k in checkpoint.keys()):
+        print("Loading 8-bit compressed model...")
+        state_dict = {}
+        for k, v in checkpoint.items():
+            if k.endswith("_scale"): continue
+            scale = checkpoint.get(k + "_scale", 1.0)
+            state_dict[k] = (v.to(torch.float16) * scale)
+        model.load_state_dict(state_dict)
+    else:
+        print("Loading standard model...")
+        model.load_state_dict(checkpoint)
         
-    model.load_state_dict(state_dict)
     model = model.half()
     model.eval()
     return model, tokenizer, device
@@ -91,14 +99,10 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban ONLY special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # 🚀 FIX: Removed the punctuation ban so the model can use spaces and commas naturally
-
-            # Soft repetition penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
                     logits[token] -= 2.0 
