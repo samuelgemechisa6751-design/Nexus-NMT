@@ -12,7 +12,6 @@ st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
 # ==========================================
 # SECURE TOKEN FETCH
 # ==========================================
-# Reads the token from Streamlit Secrets safely
 hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 
 if not hf_token:
@@ -41,8 +40,8 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    # 🚨 Points to the new 60M model uploaded at Batch 14000
-    weights_path = hf_hub_download(repo_id=repo_id, filename="nexus_batch_14000_8bit.pt", token=hf_token) 
+    # 🚀 FIXED: Now points to the exact file you uploaded to Hugging Face
+    weights_path = hf_hub_download(repo_id=repo_id, filename="model_at_batch_14000.pt", token=hf_token) 
     
     state_dict_8bit = torch.load(weights_path, map_location=device)
     state_dict = {}
