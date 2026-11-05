@@ -38,15 +38,11 @@ def load_model():
     
     weights_path = hf_hub_download(repo_id=repo_id, filename="model_epoch1_batch_19000.pt", token=hf_token) 
     
-    # 🚀 EXPERT FIX: Handle both raw and 8-bit compressed files
     checkpoint = torch.load(weights_path, map_location=device)
     
-    # Check if it's a raw model (contains 'model_state_dict') or compressed (contains '_scale')
     if "model_state_dict" in checkpoint:
-        print("Loading raw model...")
         model.load_state_dict(checkpoint["model_state_dict"])
     elif any(k.endswith("_scale") for k in checkpoint.keys()):
-        print("Loading 8-bit compressed model...")
         state_dict = {}
         for k, v in checkpoint.items():
             if k.endswith("_scale"): continue
@@ -54,7 +50,6 @@ def load_model():
             state_dict[k] = (v.to(torch.float16) * scale)
         model.load_state_dict(state_dict)
     else:
-        print("Loading standard model...")
         model.load_state_dict(checkpoint)
         
     model = model.half()
@@ -83,7 +78,7 @@ def translate(text):
 
     with torch.no_grad():
         tgt_ids = [bos_id]
-        for _ in range(64):
+        for _ in range(20):
             tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
             src_mask, tgt_mask = model.generate_mask(src_tensor, tgt_tensor)
             
@@ -99,17 +94,27 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
+            # Ban special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
+            # 🚀 FIX: Ban punctuation and spaces to force real letters
+            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
+                token_id = tokenizer.token_to_id(punct)
+                if token_id is not None:
+                    logits[token_id] = -float('inf')
+
+            # 🚀 FIX: Strong repetition penalty to stop loops
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 2.0 
+                    logits[token] -= 15.0 
             
             next_token = logits.argmax().item()
-            if next_token == eos_id:
+            
+            if next_token == eos_id or next_token == pad_id:
                 break
+                
             tgt_ids.append(next_token)
 
     clean_text = tokenizer.decode(tgt_ids, skip_special_tokens=True)
