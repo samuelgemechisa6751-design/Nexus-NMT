@@ -1,68 +1,3 @@
-import streamlit as st
-import torch
-import torch.nn as nn
-import math
-from huggingface_hub import hf_hub_download
-from tokenizers import ByteLevelBPETokenizer
-import os
-from model import NexusNMT
-
-st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
-
-hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
-if not hf_token:
-    st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets.")
-
-IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
-try:
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.image(IMAGE_URL, use_container_width=True)
-except Exception:
-    pass
-
-st.title("Nexus-NMT")
-st.write("A 60M parameter Multilingual Transformer built from scratch.")
-
-@st.cache_resource
-def load_model():
-    device = torch.device("cpu")
-    repo_id = "samuel-nexus/Nexus-NMT-Model"
-    
-    tokenizer_path = hf_hub_download(repo_id=repo_id, filename="vocab.json", token=hf_token)
-    merges_path = hf_hub_download(repo_id=repo_id, filename="merges.txt", token=hf_token)
-    tokenizer = ByteLevelBPETokenizer(tokenizer_path, merges_path)
-    
-    vocab_size = tokenizer.get_vocab_size()
-    model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
-    
-    # 🚀 UPDATED: Points to your final trained model
-    weights_path = hf_hub_download(repo_id=repo_id, filename="my_trained_model_final.pt", token=hf_token) 
-    
-    checkpoint = torch.load(weights_path, map_location=device)
-    
-    if "model_state_dict" in checkpoint:
-        model.load_state_dict(checkpoint["model_state_dict"])
-    elif any(k.endswith("_scale") for k in checkpoint.keys()):
-        state_dict = {}
-        for k, v in checkpoint.items():
-            if k.endswith("_scale"): continue
-            scale = checkpoint.get(k + "_scale", 1.0)
-            state_dict[k] = (v.to(torch.float16) * scale)
-        model.load_state_dict(state_dict)
-    else:
-        model.load_state_dict(checkpoint)
-        
-    model = model.half()
-    model.eval()
-    return model, tokenizer, device
-
-try:
-    model, tokenizer, device = load_model()
-except Exception as e:
-    st.error(f"Failed to load model. Error: {e}")
-    st.stop()
-
 def translate(text):
     bos_id = tokenizer.token_to_id("<s>")
     eos_id = tokenizer.token_to_id("</s>")
@@ -74,12 +9,15 @@ def translate(text):
     if pad_id is None: pad_id = 1
     if tag_2am is None: tag_2am = 3
 
-    src_ids = [tag_2am] + tokenizer.encode(text).ids + [eos_id]
+    # ❌ OLD: src_ids = [tag_2am] + tokenizer.encode(text).ids + [eos_id]
+    # ✅ NEW: The tokenizer ALREADY adds the <s> token. We don't add tag_2am manually.
+    src_ids = tokenizer.encode(text).ids + [eos_id]
+    
     src_tensor = torch.tensor([src_ids], dtype=torch.long).to(device)
 
     with torch.no_grad():
         tgt_ids = [bos_id]
-        for _ in range(20):
+        for _ in range(30): # Increased max length slightly
             tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
             src_mask, tgt_mask = model.generate_mask(src_tensor, tgt_tensor)
             
@@ -95,35 +33,31 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban ONLY special tokens
+            # Ban special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # 🚀 REMOVED: The ban on spaces and punctuation is gone.
-            # The model is trained enough to use them naturally now.
-
-            # Soft repetition penalty
+            # 🚀 FIX: Stronger repetition penalty. 
+            # We increase it from 2.0 to 4.0 to stop the "enenenenen" loop.
             for token in set(tgt_ids):
-                if token not in [bos_id, eos_id]:
-                    logits[token] -= 2.0 
+                if token not in [bos_id, eos_id, pad_id]:
+                    logits[token] -= 4.0 
             
             next_token = logits.argmax().item()
             
+            # Stop if EOS or PAD is generated
             if next_token == eos_id or next_token == pad_id:
                 break
                 
             tgt_ids.append(next_token)
 
+    # Decode the output. 
+    # Note: ByteLevelBPETokenizer handles spaces via the 'Ġ' character.
+    # skip_special_tokens=True handles removing <s> and </s>
     clean_text = tokenizer.decode(tgt_ids, skip_special_tokens=True)
-    return clean_text.strip() if clean_text.strip() else "[Model generated empty response]"
-
-user_input = st.text_area("English Text", "Hello, how are you?")
-if st.button("Translate"):
-    if not user_input.strip():
-        st.warning("Please enter some text to translate.")
-    else:
-        with st.spinner("Translating..."):
-            result = translate(user_input)
-            st.success("Translation Complete!")
-            st.markdown(f"### Amharic Translation:\n**{result}**")
+    
+    # Clean up any leftover byte-level artifacts if necessary
+    clean_text = clean_text.replace("Ġ", " ").strip()
+    
+    return clean_text if clean_text else "[Model generated empty response]"
