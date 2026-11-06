@@ -36,7 +36,8 @@ def load_model():
     vocab_size = tokenizer.get_vocab_size()
     model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
     
-    weights_path = hf_hub_download(repo_id=repo_id, filename="model_epoch1_batch_19000.pt", token=hf_token) 
+    # 🚀 UPDATED: Points to your final trained model
+    weights_path = hf_hub_download(repo_id=repo_id, filename="my_trained_model_final.pt", token=hf_token) 
     
     checkpoint = torch.load(weights_path, map_location=device)
     
@@ -94,26 +95,18 @@ def translate(text):
             
             logits = model.fc_out(dec_out)[0, -1, :].clone()
             
-            # Ban special tokens
+            # Ban ONLY special tokens
             logits[bos_id] = -float('inf')
             logits[pad_id] = -float('inf')
             logits[tag_2am] = -float('inf')
 
-            # 🚀 FIX: Ban punctuation and spaces
-            for punct in [".", ",", " ", "\n", "።", "፣", ";", ":", "!", "?"]:
-                token_id = tokenizer.token_to_id(punct)
-                if token_id is not None:
-                    logits[token_id] = -float('inf')
-            
-            # 🚀 FIX: Ban the specific loop token 'ቸ'
-            loop_token = tokenizer.token_to_id("ቸ")
-            if loop_token is not None:
-                logits[loop_token] = -float('inf')
+            # 🚀 REMOVED: The ban on spaces and punctuation is gone.
+            # The model is trained enough to use them naturally now.
 
-            # 🚀 FIX: Strong repetition penalty
+            # Soft repetition penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 15.0 
+                    logits[token] -= 2.0 
             
             next_token = logits.argmax().item()
             
