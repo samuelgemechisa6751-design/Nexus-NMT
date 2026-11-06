@@ -7,9 +7,14 @@ from torch.utils.data import Dataset
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
         super().__init__()
-        self.d_model = d_model; self.num_heads = num_heads; self.d_k = d_model // num_heads
-        self.W_q = nn.Linear(d_model, d_model); self.W_k = nn.Linear(d_model, d_model)
-        self.W_v = nn.Linear(d_model, d_model); self.W_o = nn.Linear(d_model, d_model)
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+        
     def forward(self, q, k, v, mask=None):
         Q = self.W_q(q).view(q.size(0), q.size(1), self.num_heads, self.d_k).transpose(1, 2)
         K = self.W_k(k).view(k.size(0), k.size(1), self.num_heads, self.d_k).transpose(1, 2)
@@ -29,24 +34,34 @@ class PositionalEncoding(nn.Module):
         pe = torch.zeros(max_len, d_model)
         pos = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
         div = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(pos * div); pe[:, 1::2] = torch.cos(pos * div)
+        pe[:, 0::2] = torch.sin(pos * div)
+        pe[:, 1::2] = torch.cos(pos * div)
         self.register_buffer('pe', pe.unsqueeze(0))
-    def forward(self, x): return x + self.pe[:, :x.size(1), :]
+        
+    def forward(self, x): 
+        return x + self.pe[:, :x.size(1), :]
 
 class PositionwiseFeedForward(nn.Module):
     def __init__(self, d_model, d_ff, dropout=0.1):
         super().__init__()
-        self.fc1 = nn.Linear(d_model, d_ff); self.fc2 = nn.Linear(d_ff, d_model)
-        self.dropout = nn.Dropout(dropout); self.relu = nn.ReLU()
-    def forward(self, x): return self.fc2(self.dropout(self.relu(self.fc1(x))))
+        self.fc1 = nn.Linear(d_model, d_ff)
+        self.fc2 = nn.Linear(d_ff, d_model)
+        self.dropout = nn.Dropout(dropout)
+        self.relu = nn.ReLU()
+        
+    def forward(self, x): 
+        return self.fc2(self.dropout(self.relu(self.fc1(x))))
 
 class EncoderLayer(nn.Module):
     def __init__(self, d_model, num_heads, d_ff, dropout=0.1):
         super().__init__()
         self.self_attn = MultiHeadAttention(d_model, num_heads)
         self.feed_forward = PositionwiseFeedForward(d_model, d_ff, dropout)
-        self.norm1 = nn.LayerNorm(d_model); self.norm2 = nn.LayerNorm(d_model)
-        self.dropout1 = nn.Dropout(dropout); self.dropout2 = nn.Dropout(dropout)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        
     def forward(self, x, mask):
         x = self.norm1(x + self.dropout1(self.self_attn(x, x, x, mask)))
         return self.norm2(x + self.dropout2(self.feed_forward(x)))
@@ -54,10 +69,16 @@ class EncoderLayer(nn.Module):
 class DecoderLayer(nn.Module):
     def __init__(self, d_model, num_heads, d_ff, dropout=0.1):
         super().__init__()
-        self.self_attn = MultiHeadAttention(d_model, num_heads); self.cross_attn = MultiHeadAttention(d_model, num_heads)
+        self.self_attn = MultiHeadAttention(d_model, num_heads)
+        self.cross_attn = MultiHeadAttention(d_model, num_heads)
         self.feed_forward = PositionwiseFeedForward(d_model, d_ff, dropout)
-        self.norm1 = nn.LayerNorm(d_model); self.norm2 = nn.LayerNorm(d_model); self.norm3 = nn.LayerNorm(d_model)
-        self.dropout1 = nn.Dropout(dropout); self.dropout2 = nn.Dropout(dropout); self.dropout3 = nn.Dropout(dropout)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.norm3 = nn.LayerNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        self.dropout3 = nn.Dropout(dropout)
+        
     def forward(self, x, enc_output, src_mask, tgt_mask):
         x = self.norm1(x + self.dropout1(self.self_attn(x, x, x, tgt_mask)))
         x = self.norm2(x + self.dropout2(self.cross_attn(x, enc_output, enc_output, src_mask)))
@@ -89,10 +110,14 @@ class NexusNMT(nn.Module):
         src_mask, tgt_mask = self.generate_mask(src, tgt)
         src_emb = self.dropout(self.positional_encoding(self.src_embedding(src) * self.scale))
         enc_out = src_emb
-        for layer in self.encoder_layers: enc_out = layer(enc_out, src_mask)
+        for layer in self.encoder_layers: 
+            enc_out = layer(enc_out, src_mask)
+            
         tgt_emb = self.dropout(self.positional_encoding(self.tgt_embedding(tgt) * self.scale))
         dec_out = tgt_emb
-        for layer in self.decoder_layers: dec_out = layer(dec_out, enc_out, src_mask, tgt_mask)
+        for layer in self.decoder_layers: 
+            dec_out = layer(dec_out, enc_out, src_mask, tgt_mask)
+            
         return self.fc_out(dec_out)
 
 class NexusDataset(Dataset):
@@ -100,13 +125,17 @@ class NexusDataset(Dataset):
         self.df = dataframe
         self.tokenizer = tokenizer
         self.max_len = max_len
-        self.bos_id = tokenizer.token_to_id("<s>"); self.eos_id = tokenizer.token_to_id("</s>")
-        self.tag_2am = tokenizer.token_to_id("<2am>"); self.tag_2en = tokenizer.token_to_id("<2en>")
+        self.bos_id = tokenizer.token_to_id("<s>")
+        self.eos_id = tokenizer.token_to_id("</s>")
+        self.tag_2am = tokenizer.token_to_id("<2am>")
+        self.tag_2en = tokenizer.token_to_id("<2en>")
         
-    def __len__(self): return len(self.df) * 2
+    def __len__(self): 
+        return len(self.df) * 2
     
     def __getitem__(self, idx):
-        row_idx = idx // 2; direction = idx % 2 
+        row_idx = idx // 2
+        direction = idx % 2 
         row = self.df.iloc[row_idx]
         en, am = str(row["src"]), str(row["tgt"])
         
