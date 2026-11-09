@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 import math
-import pandas as pd
-from torch.utils.data import Dataset
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
@@ -20,11 +18,8 @@ class MultiHeadAttention(nn.Module):
         K = self.W_k(k).view(k.size(0), k.size(1), self.num_heads, self.d_k).transpose(1, 2)
         V = self.W_v(v).view(v.size(0), v.size(1), self.num_heads, self.d_k).transpose(1, 2)
         attn = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
-        
-        # 🚀 FIX: Use torch.finfo to prevent float16 overflow
         if mask is not None: 
             attn = attn.masked_fill(mask == 0, torch.finfo(attn.dtype).min)
-            
         out = torch.matmul(torch.softmax(attn, dim=-1), V)
         return self.W_o(out.transpose(1, 2).contiguous().view(q.size(0), q.size(1), self.d_model))
 
@@ -87,7 +82,6 @@ class DecoderLayer(nn.Module):
 class NexusNMT(nn.Module):
     def __init__(self, src_vocab_size, tgt_vocab_size):
         super().__init__()
-        # 🚀 60M Model Architecture
         self.d_model = 512 
         self.src_embedding = nn.Embedding(src_vocab_size, self.d_model)
         self.tgt_embedding = nn.Embedding(tgt_vocab_size, self.d_model)
@@ -119,35 +113,3 @@ class NexusNMT(nn.Module):
             dec_out = layer(dec_out, enc_out, src_mask, tgt_mask)
             
         return self.fc_out(dec_out)
-
-class NexusDataset(Dataset):
-    def __init__(self, dataframe, tokenizer, max_len=128):
-        self.df = dataframe
-        self.tokenizer = tokenizer
-        self.max_len = max_len
-        self.bos_id = tokenizer.token_to_id("<s>")
-        self.eos_id = tokenizer.token_to_id("</s>")
-        self.tag_2am = tokenizer.token_to_id("<2am>")
-        self.tag_2en = tokenizer.token_to_id("<2en>")
-        
-    def __len__(self): 
-        return len(self.df) * 2
-    
-    def __getitem__(self, idx):
-        row_idx = idx // 2
-        direction = idx % 2 
-        row = self.df.iloc[row_idx]
-        en, am = str(row["src"]), str(row["tgt"])
-        
-        if direction == 0:
-            src_ids = [self.tag_2am] + self.tokenizer.encode(en).ids + [self.eos_id]
-            tgt_ids = [self.bos_id] + self.tokenizer.encode(am).ids + [self.eos_id]
-        else:
-            src_ids = [self.tag_2en] + self.tokenizer.encode(am).ids + [self.eos_id]
-            tgt_ids = [self.bos_id] + self.tokenizer.encode(en).ids + [self.eos_id]
-            
-        src_ids = src_ids[:self.max_len]
-        tgt_ids = tgt_ids[:self.max_len]
-        
-        return {"src": torch.tensor(src_ids, dtype=torch.long), 
-                "tgt": torch.tensor(tgt_ids, dtype=torch.long)}
