@@ -12,22 +12,12 @@ hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 if not hf_token:
     st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets.")
 
-IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
-try:
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.image(IMAGE_URL, use_container_width=True)
-except Exception:
-    pass
-
 st.title("Nexus-NMT")
 st.write("A custom Transformer built from scratch for English to Amharic translation.")
 
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    
-    # 🚀 UPDATED TO YOUR NEW REPO AND EPOCH 8 MODEL
     repo_id = "samuel-nexus/nexus-nmt-eng-amh" 
     
     try:
@@ -62,6 +52,8 @@ with st.spinner("Loading Nexus-NMT model from Hugging Face..."):
 def translate(text):
     bos_id = tokenizer.token_to_id("<s>") or 0
     eos_id = tokenizer.token_to_id("</s>") or 2
+    unk_id = tokenizer.token_to_id("<unk>") or 3
+    pad_id = tokenizer.token_to_id("<pad>") or 1
     
     # Encode input
     src_ids = tokenizer.encode(text).ids + [eos_id]
@@ -73,37 +65,40 @@ def translate(text):
         for _ in range(50): # Max output length
             tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
             
-            # 🚀 USE THE MODEL'S BUILT-IN FORWARD PASS
-            logits = model(src_tensor, tgt_tensor)
+            # Forward pass
+            logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
             
-            # Get the most likely next token
-            next_token_logits = logits[0, -1, :]
+            # 🚀 FIX 1: Ban Special Tokens (Pad, Unk, Bos)
+            logits[pad_id] = -float('inf')
+            logits[unk_id] = -float('inf')
+            logits[bos_id] = -float('inf')
             
-            # Repetition penalty
+            # 🚀 FIX 2: Strong Repetition Penalty (-20.0)
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    next_token_logits[token] -= 5.0 
+                    logits[token] -= 20.0 
                     
-            next_token = next_token_logits.argmax().item()
+            next_token = logits.argmax().item()
+            
+            # 🚀 FIX 3: HARD BREAK (Stops the ::::: loop instantly)
+            if len(tgt_ids) >= 3 and tgt_ids[-1] == next_token and tgt_ids[-2] == next_token and tgt_ids[-3] == next_token:
+                break
             
             if next_token == eos_id:
                 break
                 
             tgt_ids.append(next_token)
 
-    # 🚀 FIXED DECODING (Removed skip_special_tokens=True)
     clean_text = tokenizer.decode(tgt_ids)
     
-    # Remove special tokens manually
-    for tag in ["<s>", "</s>", "<pad>"]:
+    for tag in ["<s>", "</s>", "<pad>", "<unk>"]:
         clean_text = clean_text.replace(tag, "")
         
-    # Replace ByteLevel space character
     clean_text = clean_text.replace("Ġ", " ").strip()
     
     return clean_text if clean_text else "[Model generated empty response]"
 
-user_input = st.text_area("English Text", "Hello, how are you?")
+user_input = st.text_area("English Text", "The president spoke to the nation.")
 if st.button("Translate"):
     if not user_input.strip():
         st.warning("Please enter some text to translate.")
