@@ -5,6 +5,7 @@ from huggingface_hub import hf_hub_download
 from tokenizers import ByteLevelBPETokenizer
 from model import NexusNMT
 
+# Set page config
 st.set_page_config(page_title="Nexus-NMT", page_icon="🌍")
 
 # Fetch token from Streamlit secrets
@@ -12,6 +13,7 @@ hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 if not hf_token:
     st.warning("⚠️ HF_TOKEN not found in Streamlit Secrets.")
 
+# Optional: Add a nice header image
 IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tree_with_roots.png/800px-Tree_with_roots.png"
 try:
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -25,7 +27,7 @@ st.write("A custom Transformer built from scratch for English to Amharic transla
 
 @st.cache_resource
 def load_model():
-    device = torch.device("cpu")
+    device = torch.device("cpu") # Streamlit runs on CPU
     repo_id = "samuel-nexus/nexus-nmt-eng-amh" 
     
     try:
@@ -38,7 +40,7 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
         
-        # 3. Load Weights (🚀 UPDATED TO EPOCH 10)
+        # 3. Load Weights (Epoch 10)
         weights_path = hf_hub_download(repo_id=repo_id, filename="new_model_epoch10_batch_10000.pt", token=hf_token) 
         checkpoint = torch.load(weights_path, map_location=device)
         
@@ -76,7 +78,7 @@ def translate(text):
             # Forward pass
             logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
             
-            # 1. Ban Special Tokens
+            # 1. Ban Special Tokens (Prevent the ::::: loop)
             logits[pad_id] = -float('inf')
             logits[unk_id] = -float('inf')
             logits[bos_id] = -float('inf')
@@ -84,13 +86,11 @@ def translate(text):
             # 2. Repetition Penalty
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 15.0 
+                    logits[token] -= 10.0 
 
-            # 3. 🚀 TOP-K SAMPLING (Fixes the infinite loop)
-            top_k = 5
-            top_logits, top_indices = torch.topk(logits, top_k)
-            probs = torch.softmax(top_logits, dim=-1)
-            next_token = top_indices[torch.multinomial(probs, 1)].item()
+            # 🚀 3. GREEDY DECODING (Pick the absolute best #1 word)
+            # This fixes the random hallucination (e.g. outputting "election" instead of "president")
+            next_token = logits.argmax().item()
             
             # Stop if we hit end of sentence
             if next_token == eos_id:
