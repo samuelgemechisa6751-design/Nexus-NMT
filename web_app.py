@@ -38,8 +38,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
         
-        # 3. Load Weights (Epoch 8)
-        weights_path = hf_hub_download(repo_id=repo_id, filename="new_model_epoch8_batch_10000.pt", token=hf_token) 
+        # 3. Load Weights (🚀 UPDATED TO EPOCH 10)
+        weights_path = hf_hub_download(repo_id=repo_id, filename="new_model_epoch10_batch_10000.pt", token=hf_token) 
         checkpoint = torch.load(weights_path, map_location=device)
         
         if "model_state_dict" in checkpoint:
@@ -87,14 +87,9 @@ def translate(text):
                     logits[token] -= 15.0 
 
             # 3. 🚀 TOP-K SAMPLING (Fixes the infinite loop)
-            # Instead of picking the #1 word, pick randomly from the Top 5
             top_k = 5
             top_logits, top_indices = torch.topk(logits, top_k)
-            
-            # Convert to probabilities
             probs = torch.softmax(top_logits, dim=-1)
-            
-            # Sample from the top 5 words
             next_token = top_indices[torch.multinomial(probs, 1)].item()
             
             # Stop if we hit end of sentence
