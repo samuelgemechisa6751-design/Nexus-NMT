@@ -39,8 +39,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
         
-        # 3. Load Weights (Batch 50000)
-        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_50000.pt", token=hf_token) 
+        # 🚀 3. Load Weights (UPDATED TO BATCH 55000)
+        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_55000.pt", token=hf_token) 
         
         # 🚀 MEMORY FIX: Load with weights_only=True for Streamlit
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
@@ -90,13 +90,13 @@ def translate(text, direction):
             logits[tag_2am] = -float('inf')
             logits[tag_2en] = -float('inf')
             
-            # Force at least 2 words
-            if step < 2:
+            # Force at least 3 words
+            if step < 3:
                 logits[eos_id] = -float('inf')
             
             for token in set(tgt_ids):
                 if token not in [bos_id, eos_id]:
-                    logits[token] -= 10.0 
+                    logits[token] -= 15.0 # Increased penalty slightly for better sentences
 
             next_token = logits.argmax().item()
             
