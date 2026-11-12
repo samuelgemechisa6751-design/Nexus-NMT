@@ -1,5 +1,6 @@
 import streamlit as st
 import torch
+import torch.nn.functional as F
 import os
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer
@@ -59,8 +60,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
         
-        # 🚀 LOADING BATCH 75000
-        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_75000.pt", token=hf_token) 
+        # 🚀 LOADING BATCH 80000
+        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_80000.pt", token=hf_token) 
         
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
         
@@ -76,11 +77,11 @@ def load_model():
         st.error(f"Error loading model: {e}")
         st.stop()
 
-with st.spinner("Loading Bidirectional Neural Network..."):
+with st.spinner("Loading 80k Bidirectional Neural Network..."):
     model, tokenizer, device = load_model()
 
 # ==========================================
-# 4. TRANSLATION LOGIC
+# 4. BEAM SEARCH TRANSLATION LOGIC
 # ==========================================
 def translate(text, direction):
     bos_id = tokenizer.token_to_id("<s>") or 0
@@ -99,35 +100,59 @@ def translate(text, direction):
     src_ids = [tag_id] + tokenizer.encode(text).ids + [eos_id]
     src_tensor = torch.tensor([src_ids], dtype=torch.long).to(device)
 
-    with torch.no_grad():
-        tgt_ids = [bos_id]
-        
-        for step in range(50): 
-            tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
-            logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
-            
-            logits[pad_id] = -float('inf')
-            logits[unk_id] = -float('inf')
-            logits[bos_id] = -float('inf')
-            logits[tag_2am] = -float('inf')
-            logits[tag_2en] = -float('inf')
-            
-            # Force at least 3 words so it doesn't stop instantly
-            if step < 3:
-                logits[eos_id] = -float('inf')
-            
-            for token in set(tgt_ids):
-                if token not in [bos_id, eos_id]:
-                    logits[token] -= 15.0 
+    # Beam Search Parameters
+    beam_width = 3
+    max_len = 50
+    min_len = 3 # Force at least 3 words
 
-            next_token = logits.argmax().item()
+    with torch.no_grad():
+        # Beam contains tuples of (log_prob, token_list)
+        beam = [(0.0, [bos_id])]
+        
+        for step in range(max_len):
+            new_beam = []
+            for log_prob, tgt_ids in beam:
+                tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
+                logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
+                
+                # 1. Ban Special Tokens & Tags
+                logits[pad_id] = -float('inf')
+                logits[unk_id] = -float('inf')
+                logits[bos_id] = -float('inf')
+                logits[tag_2am] = -float('inf')
+                logits[tag_2en] = -float('inf')
+                
+                # 2. Enforce Minimum Length
+                if step < min_len:
+                    logits[eos_id] = -float('inf')
+                
+                # 3. Repetition Penalty (Prevents loops)
+                for token in set(tgt_ids):
+                    if token not in [bos_id, eos_id]:
+                        logits[token] -= 15.0 
+                
+                # 4. Get Top-K Probabilities
+                log_probs = F.log_softmax(logits, dim=-1)
+                topk_probs, topk_ids = torch.topk(log_probs, beam_width)
+                
+                for i in range(beam_width):
+                    new_log_prob = log_prob + topk_probs[i].item()
+                    new_ids = tgt_ids + [topk_ids[i].item()]
+                    new_beam.append((new_log_prob, new_ids))
             
-            if next_token == eos_id:
+            # Sort by cumulative probability
+            new_beam.sort(key=lambda x: x[0], reverse=True)
+            beam = new_beam[:beam_width]
+            
+            # Stop if all beams end with EOS
+            if all(b[1][-1] == eos_id for b in beam):
                 break
                 
-            tgt_ids.append(next_token)
-
-    clean_text = tokenizer.decode(tgt_ids)
+    # Pick the sentence with the highest overall probability
+    best_sentence_ids = beam[0][1]
+    
+    # Decode
+    clean_text = tokenizer.decode(best_sentence_ids)
     
     for tag in ["<s>", "</s>", "<pad>", "<unk>", "<2am>", "<2en>"]:
         clean_text = clean_text.replace(tag, "")
@@ -135,7 +160,7 @@ def translate(text, direction):
     clean_text = clean_text.replace("Ġ", " ").strip()
     
     if not clean_text:
-        return f"[Empty Response]"
+        return "[Empty Response]"
         
     return clean_text
 
