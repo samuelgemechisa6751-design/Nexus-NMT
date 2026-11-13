@@ -28,7 +28,7 @@ st.markdown("""
     --grad-end: #FF00A8;   /* Magenta/Pink */
 }
 
-/* ---------- Canvas & Global Overrides ---------- */
+/* ---------- Canvas ---------- */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
     font-family: 'Sora', 'Noto Sans Ethiopic', sans-serif !important;
 }
@@ -37,10 +37,10 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
         radial-gradient(900px 520px at 8% -8%, rgba(14,124,134,0.28), transparent 60%),
         radial-gradient(760px 480px at 100% 0%, rgba(242,169,59,0.26), transparent 60%),
         radial-gradient(900px 600px at 50% 115%, rgba(14,124,134,0.16), transparent 60%),
-        var(--mist);
+        var(--mist) !important;
     color: var(--ink);
 }
-header[data-testid="stHeader"] { background: transparent; }
+header[data-testid="stHeader"] { background: transparent !important; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
 .block-container { max-width: 1400px; padding-top: 2rem; padding-bottom: 3rem; }
 
@@ -48,13 +48,13 @@ header[data-testid="stHeader"] { background: transparent; }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
 .brand-mark {
     width: 42px; height: 42px; border-radius: 12px;
-    background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+    background: linear-gradient(135deg, var(--grad-start), var(--grad-end)) !important;
     box-shadow: 0 6px 18px rgba(255, 0, 168, 0.35);
     position: relative;
 }
 .brand-mark::after {
     content: ""; position: absolute; inset: 10px; border-radius: 50%;
-    background: #ffffff;
+    background: #ffffff !important;
 }
 .brand-name { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; color: var(--ink); }
 
@@ -62,18 +62,17 @@ header[data-testid="stHeader"] { background: transparent; }
 .lang-pill {
     display: flex; align-items: center; justify-content: center; gap: 10px;
     height: 56px; border-radius: 16px; font-weight: 600; font-size: 1.05rem;
-    background: #ffffff; border: 1px solid var(--line);
+    background: #ffffff !important; border: 1px solid var(--line);
     color: var(--ink);
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
-.lang-pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad-start); }
-.lang-pill.target .dot { background: var(--grad-end); }
+.lang-pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad-start) !important; }
+.lang-pill.target .dot { background: var(--grad-end) !important; }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.15rem; }
 
-/* ---------- Swap Button (Exact Gradient & No Black) ---------- */
-.st-key-swap .stButton > button,
-.st-key-swap .stButton > button:focus,
-.st-key-swap .stButton > button:active {
+/* ---------- Swap Button (BRUTAL OVERRIDE) ---------- */
+/* Target the specific Streamlit container we named "swap" */
+.st-key-swap button {
     width: 56px !important; 
     height: 56px !important; 
     min-height: 56px !important; 
@@ -89,42 +88,42 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 8px 20px -5px rgba(255, 0, 168, 0.5) !important;
     transition: transform .3s ease, box-shadow .3s ease !important;
 }
-/* Force text inside button to white */
-.st-key-swap .stButton > button * {
+/* Force the inner text/markdown to be white */
+.st-key-swap button * {
     color: #ffffff !important;
+    background-color: transparent !important;
 }
-.st-key-swap .stButton > button:hover { 
+.st-key-swap button:hover { 
     transform: rotate(180deg) scale(1.05) !important; 
     box-shadow: 0 12px 25px -5px rgba(255, 0, 168, 0.7) !important;
 }
 
-/* ---------- Input panel (Aggressively Forced Solid White) ---------- */
-.stTextArea label { display: none; }
-/* Target every possible wrapper to kill dark mode backgrounds */
-.stTextArea > div,
-.stTextArea > div > div,
-.stTextArea > div > div > div,
-.stTextArea [data-baseweb="textarea"], 
-.stTextArea [data-baseweb="base-input"],
-.stTextArea .st-emotion-cache-1wbqy5l { 
-    background-color: #ffffff !important; 
-    background: #ffffff !important;
-    border-radius: 16px !important;
-}
+/* ---------- Input Panel (BRUTAL OVERRIDE for Black Border) ---------- */
+/* Hide the default border Streamlit puts around the text area */
 .stTextArea > div > div {
-    border: 1px solid rgba(0, 229, 255, 0.3) !important; 
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* Force the actual textarea wrapper to be solid white with a nice border */
+div[data-testid="stTextArea"] > div > div > div > div > div {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 229, 255, 0.4) !important; 
+    border-radius: 16px !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
 }
-.stTextArea textarea {
+
+/* Target the textarea element itself */
+div[data-testid="stTextArea"] textarea {
     background-color: #ffffff !important;
     font-size: 1.15rem !important; 
     line-height: 1.6 !important; 
     color: #0F2A2E !important; 
     padding: 20px 22px !important; 
 }
-.stTextArea textarea::placeholder { color: #9FB0B4 !important; }
+div[data-testid="stTextArea"] textarea::placeholder { color: #9FB0B4 !important; }
 
-/* ---------- Output panel (Colored Sentence) ---------- */
+/* ---------- Output Panel (Colored Sentence) ---------- */
 .out-panel {
     min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
@@ -145,11 +144,11 @@ header[data-testid="stHeader"] { background: transparent; }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
-/* ---------- Translate Button (Exact Gradient) ---------- */
+/* ---------- Translate Button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
     height: 56px; 
     border-radius: 16px; 
-    border: none; 
+    border: none !important; 
     font-weight: 600; 
     font-size: 1.15rem; 
     color: #ffffff !important;
@@ -165,7 +164,7 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* ---------- Sidebar Cards ---------- */
 .side-card {
-    background: #ffffff; border: 1px solid var(--line); border-radius: 16px;
+    background: #ffffff !important; border: 1px solid var(--line); border-radius: 16px;
     padding: 20px; margin-bottom: 20px; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
@@ -173,7 +172,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .side-text { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; }
 .side-val { font-weight: 700; color: var(--ink); }
 
-/* Clear Input Button Fix */
+/* Clear Input Button */
 .stButton > button:not([kind="primary"]) {
     background-color: #ffffff !important;
     color: var(--ink) !important;
