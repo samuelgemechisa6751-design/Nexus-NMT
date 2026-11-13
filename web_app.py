@@ -42,11 +42,10 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
 }
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
-/* Increased max-width to fit sidebars */
 .block-container { max-width: 1400px; padding-top: 2rem; padding-bottom: 3rem; }
 
 /* ---------- Brand bar ---------- */
-.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2.6rem; }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
 .brand-mark {
     width: 38px; height: 38px; border-radius: 12px;
     background: conic-gradient(from 210deg, var(--teal), var(--saffron), var(--teal));
@@ -66,10 +65,10 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* ---------- Hero ---------- */
 .hero-title {
-    font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.08;
-    letter-spacing: -0.03em; color: var(--ink); margin: 0 0 0.9rem 0; max-width: 16ch;
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.08;
+    letter-spacing: -0.03em; color: var(--ink); margin: 0 0 0.9rem 0;
 }
-.hero-sub { font-size: 1.05rem; color: var(--muted); max-width: 46ch; margin-bottom: 2.2rem; line-height: 1.6; }
+.hero-sub { font-size: 1.05rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.6; }
 
 /* ---------- Language bar ---------- */
 .lang-pill {
@@ -150,7 +149,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .stat b { display: block; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
 .stat span { font-size: 0.82rem; color: var(--muted); }
 
-/* ---------- New Sidebar Cards ---------- */
+/* ---------- Sidebar Cards ---------- */
 .side-card {
     background: var(--glass); border: 1px solid var(--line); border-radius: 16px;
     padding: 16px; margin-bottom: 16px; backdrop-filter: blur(12px);
@@ -250,15 +249,19 @@ def translate(text, to_amharic):
     return clean_text.replace("Ġ", " ").strip() or "[Empty response]"
 
 # ==========================================
-# 4. UI STATE
+# 4. STATE INITIALIZATION
 # ==========================================
 SAMPLES = {"en": "The president spoke to the nation.", "am": "ፕሬዝዳንቱ ለህዝቡ ተናገሩ።"}
 
 if "src" not in st.session_state:
     st.session_state.src = "en"
+if "text" not in st.session_state:
     st.session_state.text = SAMPLES["en"]
+if "result" not in st.session_state:
     st.session_state.result = None
+if "fresh" not in st.session_state:
     st.session_state.fresh = False
+if "history" not in st.session_state:
     st.session_state.history = []
 
 def swap_languages():
@@ -274,9 +277,9 @@ def clear_input():
     st.session_state.fresh = False
 
 # ==========================================
-# 5. MAIN LAYOUT WITH SIDEBARS
+# 5. MAIN LAYOUT (WITH SIDEBARS)
 # ==========================================
-col_left, col_main, col_right = st.columns([1, 3, 1], gap="large")
+col_left, col_main, col_right = st.columns([1, 2.5, 1], gap="large")
 
 # --- LEFT SIDEBAR (History) ---
 with col_left:
@@ -284,11 +287,13 @@ with col_left:
     if not st.session_state.history:
         st.markdown('<div class="side-text">No history yet.</div>', unsafe_allow_html=True)
     else:
-        for i, item in enumerate(reversed(st.session_state.history[-3:])):
-            st.markdown(f'<div class="side-text"><b>{item["src"][:20]}...</b><br>{item["tgt"][:20]}...</div>', unsafe_allow_html=True)
+        for item in reversed(st.session_state.history[-3:]):
+            src_str = str(item.get("src", ""))[:20]
+            tgt_str = str(item.get("tgt", ""))[:20]
+            st.markdown(f'<div class="side-text"><b>{html.escape(src_str)}...</b><br>{html.escape(tgt_str)}...</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- CENTER (Your Exact Original UI) ---
+# --- CENTER (Your Exact UI) ---
 with col_main:
     st.markdown("""
     <div class="brand">
@@ -325,7 +330,6 @@ with col_main:
             max_chars=500,
             placeholder="Type an English sentence..." if src_is_en else "አማርኛ ዓረፍተ ነገር እዚህ ይጻፉ...",
         )
-        # Character Counter Feature
         char_count = len(user_input)
         st.markdown(f'<div style="text-align: right; font-size: 0.8rem; color: var(--muted); margin-top: -10px;">{char_count} / 500</div>', unsafe_allow_html=True)
 
@@ -337,7 +341,7 @@ with col_main:
             result = st.session_state.result
             if result:
                 cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
-                out_slot.markdown(f'<div class="{cls}">{html.escape(result)}</div>', unsafe_allow_html=True)
+                out_slot.markdown(f'<div class="{cls}">{html.escape(str(result))}</div>', unsafe_allow_html=True)
             else:
                 out_slot.markdown('<div class="out-panel empty">Your translation will appear here.</div>', unsafe_allow_html=True)
 
@@ -352,7 +356,6 @@ with col_main:
         if not user_input.strip():
             st.warning("Enter some text to translate.")
         else:
-            # Auto-detect Language Feature
             has_ethiopic = bool(re.search(r'[\u1200-\u137F]', user_input))
             if has_ethiopic and src_is_en:
                 st.session_state.src = "am"
@@ -361,9 +364,13 @@ with col_main:
             with st.spinner("Translating..."):
                 st.session_state.result = translate(user_input, to_amharic=src_is_en)
                 st.session_state.fresh = True
-                # Add to history
                 st.session_state.history.append({"src": user_input, "tgt": st.session_state.result})
-            st.rerun()
+            
+            # Using try/except to support older streamlit versions safely
+            try:
+                st.rerun()
+            except AttributeError:
+                st.experimental_rerun()
 
     # FOOTER
     st.markdown("""
@@ -378,17 +385,15 @@ with col_main:
 with col_right:
     st.markdown('<div class="side-card"><div class="side-title">🛠️ Tools</div>', unsafe_allow_html=True)
     
-    # Download Feature
     if st.session_state.result:
         st.download_button(
             label="📥 Download TXT",
-            data=st.session_state.result,
+            data=str(st.session_state.result),
             file_name="translation.txt",
             mime="text/plain",
             use_container_width=True
         )
     
-    # Clear Feature
     st.button("🗑️ Clear Input", on_click=clear_input, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
