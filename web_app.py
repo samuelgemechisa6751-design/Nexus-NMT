@@ -59,18 +59,6 @@ header[data-testid="stHeader"] { background: transparent; }
     background: var(--mist);
 }
 .brand-name { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--ink); }
-.brand-tag {
-    margin-left: auto; font-size: 0.82rem; color: var(--muted);
-    padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px;
-    background: rgba(255,255,255,0.55); backdrop-filter: blur(8px);
-}
-
-/* ---------- Hero ---------- */
-.hero-title {
-    font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.08;
-    letter-spacing: -0.03em; color: var(--ink); margin: 0 0 0.9rem 0;
-}
-/* Note: .hero-sub was removed as requested */
 
 /* ---------- Language bar ---------- */
 .lang-pill {
@@ -84,14 +72,29 @@ header[data-testid="stHeader"] { background: transparent; }
 .lang-pill.target .dot { background: var(--grad-end); }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
 
-/* ---------- Swap Button (Exact Gradient) ---------- */
+/* ---------- Swap Button (Force Gradient & Remove Black) ---------- */
 .st-key-swap .stButton > button {
-    width: 52px; height: 52px; min-height: 52px; padding: 0; margin: 0 auto; display: block;
-    border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: #ffffff !important;
+    width: 52px !important; 
+    height: 52px !important; 
+    min-height: 52px !important; 
+    padding: 0 !important; 
+    margin: 0 auto !important; 
+    display: block !important;
+    border-radius: 16px !important; /* Slightly squarish as in your latest screenshot */
+    font-size: 1.25rem !important; 
+    font-weight: 600 !important; 
+    color: #ffffff !important;
     background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     border: none !important;
     box-shadow: 0 10px 26px -10px rgba(255, 0, 168, 0.6) !important;
     transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease !important;
+}
+/* Target inner elements to kill the black background */
+.st-key-swap .stButton > button > div,
+.st-key-swap .stButton > button > div > p,
+.st-key-swap .stButton > button [data-testid="stMarkdownContainer"] {
+    color: #ffffff !important;
+    background: transparent !important;
 }
 .st-key-swap .stButton > button:hover { 
     transform: rotate(180deg) scale(1.05) !important; 
@@ -315,14 +318,12 @@ with col_left:
 
 # --- CENTER (Your Exact UI) ---
 with col_main:
-    # Removed the paragraph (hero-sub) as requested
+    # Kept only the brand name and mark. Removed the text below it.
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
         <div class="brand-name">Nexus-NMT</div>
-        <div class="brand-tag">Built from scratch, no pretrained model</div>
     </div>
-    <h1 class="hero-title">Translate between English and Amharic</h1>
     """, unsafe_allow_html=True)
 
     src_is_en = st.session_state.src == "en"
