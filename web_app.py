@@ -27,7 +27,7 @@ st.markdown("""
     --glass: rgba(255,255,255,0.72);
     --line: rgba(15,42,46,0.10);
     
-    /* New Vibrant Gradient Colors */
+    /* Gradient Colors */
     --cyan: #00E5FF;
     --magenta: #FF007F;
     --purple: #8A2BE2;
@@ -85,7 +85,7 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 30px -12px rgba(15,42,46,0.18);
 }
 .lang-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
-.lang-pill.target .dot { background: var(--magenta); } /* Changed dot color to match theme */
+.lang-pill.target .dot { background: var(--magenta); }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
 
 /* ---------- Swap Button (Right Side Style) ---------- */
@@ -103,7 +103,7 @@ header[data-testid="stHeader"] { background: transparent; }
     color: #fff;
 }
 
-/* ---------- Input panel (text area) - NO BLACK BACKGROUND ---------- */
+/* ---------- Input panel (text area) ---------- */
 .stTextArea label { display: none; }
 .stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
     background: transparent !important; border: none !important;
@@ -120,13 +120,12 @@ header[data-testid="stHeader"] { background: transparent; }
     border-color: var(--cyan) !important;
     box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.15);
 }
-/* Force dark text on light background */
 .stTextArea textarea {
     font-size: 1.15rem !important; line-height: 1.6 !important; color: var(--dark-panel) !important;
     padding: 20px 22px !important; background: transparent !important;
 }
 
-/* ---------- Output panel (Vibrant Gradient) ---------- */
+/* ---------- Output panel ---------- */
 .out-panel {
     min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
     background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 50%, var(--magenta) 100%);
@@ -147,19 +146,23 @@ header[data-testid="stHeader"] { background: transparent; }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .panel-label { font-size: 0.85rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
-/* ---------- Translate button ---------- */
+/* ---------- Translate Button (Exactly matches the screenshot) ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-    height: 56px; border-radius: 12px; border: none; font-weight: 700; font-size: 1.05rem; color: #fff;
-    background: linear-gradient(90deg, var(--cyan) 0%, var(--magenta) 100%);
-    box-shadow: 0 16px 34px -14px rgba(255, 0, 127, 0.6);
-    transition: transform .2s ease, box-shadow .2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    height: 56px; 
+    border-radius: 16px; 
+    border: none; 
+    font-weight: 500; 
+    font-size: 1.1rem; 
+    color: #ffffff !important;
+    background: linear-gradient(90deg, #00E5FF 0%, #FF00A8 100%) !important;
+    box-shadow: 0 10px 25px -5px rgba(255, 0, 168, 0.4) !important;
+    transition: all .2s ease !important;
+    letter-spacing: 0.02em;
 }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
     transform: translateY(-2px); 
-    box-shadow: 0 22px 40px -14px rgba(255, 0, 127, 0.8); 
-    color: #fff;
+    box-shadow: 0 15px 35px -5px rgba(255, 0, 168, 0.6) !important; 
+    color: #ffffff !important;
 }
 
 /* ---------- Sidebar Cards ---------- */
