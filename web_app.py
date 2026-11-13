@@ -43,19 +43,50 @@ header[data-testid="stHeader"] { background: transparent !important; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
 .block-container { max-width: 1300px; padding-top: 3rem; padding-bottom: 3rem; }
 
-/* ---------- Brand bar ---------- */
-.brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 3rem; flex-direction: column;}
+/* ---------- Modern Brand Logo & Name ---------- */
+.brand { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 16px; 
+    margin-bottom: 3rem; 
+    flex-direction: column;
+}
 .brand-mark {
-    width: 60px; height: 60px; border-radius: 18px;
-    background: linear-gradient(135deg, var(--grad-start), var(--grad-end)) !important;
-    box-shadow: 0 10px 25px rgba(255, 0, 168, 0.3);
+    width: 80px; 
+    height: 80px; 
+    border-radius: 24px;
+    /* Vibrant modern gradient */
+    background: linear-gradient(135deg, #00E5FF 0%, #8A2BE2 50%, #FF00A8 100%) !important;
+    /* Soft colored glow shadow */
+    box-shadow: 0 15px 40px -10px rgba(255, 0, 168, 0.4), 
+                0 0 20px rgba(0, 229, 255, 0.2) !important;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+/* The white circle inside the logo */
 .brand-mark::after {
-    content: ""; position: absolute; inset: 14px; border-radius: 50%;
+    content: ""; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%;
     background: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.brand-name { font-weight: 800; font-size: 1.8rem; letter-spacing: -0.02em; color: var(--ink); margin-top: 10px;}
+/* Modern typography for the app name */
+.brand-name { 
+    font-weight: 800; 
+    font-size: 2.2rem; 
+    letter-spacing: -0.04em; 
+    /* Dark navy with a subtle gradient */
+    background: linear-gradient(to right, #0F2A2E, #1A3C42);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 8px;
+    text-align: center;
+}
 
 /* ---------- Language bar ---------- */
 .lang-pill {
@@ -96,12 +127,11 @@ header[data-testid="stHeader"] { background: transparent !important; }
 
 /* ---------- Modern Input Panel ---------- */
 .stTextArea label { display: none; }
-/* Target the specific wrapper to create a modern floating card */
 div[data-testid="stTextArea"] > div > div > div > div > div {
     background-color: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.05) !important; 
     border-radius: 24px !important;
-    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.1) !important; /* Soft modern shadow */
+    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.1) !important; 
     transition: all 0.3s ease;
 }
 div[data-testid="stTextArea"] > div > div > div > div > div:focus-within {
@@ -119,7 +149,7 @@ div[data-testid="stTextArea"] textarea {
 
 /* ---------- Modern Output Panel (Colored Sentence) ---------- */
 .out-panel {
-    min-height: 240px; /* Matches input height roughly */
+    min-height: 240px; 
     padding: 28px; 
     border-radius: 24px; 
     position: relative;
@@ -332,7 +362,7 @@ with st.sidebar:
 col1, col2, col3 = st.columns([1, 8, 1])
 
 with col2:
-    # Centered Brand
+    # Centered Brand (Updated Modern Style)
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
@@ -362,11 +392,10 @@ with col2:
 
     with left:
         st.markdown('<p class="panel-label">Source Text</p>', unsafe_allow_html=True)
-        # Removed the character counter completely
         user_input = st.text_area(
             "Input text",
             key="text",
-            height=240, # Made slightly taller
+            height=240,
             max_chars=500,
             placeholder="Type your text here..." if src_is_en else "እዚህ ይጻፉ...",
             label_visibility="collapsed"
