@@ -57,23 +57,13 @@ header[data-testid="stHeader"] { background: transparent !important; }
 }
 .brand-name { font-weight: 800; font-size: 1.8rem; letter-spacing: -0.02em; color: var(--ink); margin-top: 10px;}
 
-/* ---------- Main Glass Container ---------- */
-.main-glass {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 32px;
-    padding: 40px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-}
-
 /* ---------- Language bar ---------- */
 .lang-pill {
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    height: 60px; border-radius: 20px; font-weight: 700; font-size: 1.1rem;
+    height: 64px; border-radius: 20px; font-weight: 700; font-size: 1.1rem;
     background: #ffffff !important; border: 1px solid var(--line);
     color: var(--ink);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
 }
 .lang-pill .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--grad-start) !important; }
 .lang-pill.target .dot { background: var(--grad-end) !important; }
@@ -81,64 +71,71 @@ header[data-testid="stHeader"] { background: transparent !important; }
 
 /* ---------- Swap Button (Modern Circular) ---------- */
 .st-key-swap button {
-    width: 56px !important; 
-    height: 56px !important; 
-    min-height: 56px !important; 
+    width: 64px !important; 
+    height: 64px !important; 
+    min-height: 64px !important; 
     padding: 0 !important; 
     margin: 0 auto !important; 
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: 50% !important; 
-    font-size: 1.4rem !important; 
+    font-size: 1.6rem !important; 
     font-weight: 600 !important; 
     color: #ffffff !important;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     border: none !important;
-    box-shadow: 0 10px 25px -5px rgba(255, 0, 168, 0.5) !important;
+    box-shadow: 0 15px 30px -5px rgba(255, 0, 168, 0.5) !important;
     transition: transform .3s ease, box-shadow .3s ease !important;
 }
 .st-key-swap button * { color: #ffffff !important; background-color: transparent !important; }
 .st-key-swap button:hover { 
     transform: rotate(180deg) scale(1.1) !important; 
-    box-shadow: 0 15px 35px -5px rgba(255, 0, 168, 0.7) !important;
+    box-shadow: 0 20px 40px -5px rgba(255, 0, 168, 0.7) !important;
 }
 
-/* ---------- Input panel (CLEAN WHITE) ---------- */
+/* ---------- Modern Input Panel ---------- */
 .stTextArea label { display: none; }
+/* Target the specific wrapper to create a modern floating card */
 div[data-testid="stTextArea"] > div > div > div > div > div {
     background-color: #ffffff !important;
-    border: 2px solid transparent !important; /* Invisible border to prevent jump */
-    border-radius: 20px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
-    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important; 
+    border-radius: 24px !important;
+    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.1) !important; /* Soft modern shadow */
+    transition: all 0.3s ease;
 }
-/* Gradient border trick */
 div[data-testid="stTextArea"] > div > div > div > div > div:focus-within {
     border-color: rgba(0, 229, 255, 0.5) !important;
-    box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.1) !important;
+    box-shadow: 0 15px 35px -10px rgba(0, 229, 255, 0.2) !important;
 }
 div[data-testid="stTextArea"] textarea {
     background-color: #ffffff !important;
     font-size: 1.2rem !important; 
     line-height: 1.7 !important; 
     color: #0F2A2E !important; 
-    padding: 24px !important; 
+    padding: 28px !important; 
+    border-radius: 24px !important;
 }
 
-/* ---------- Output panel (Colored Sentence) ---------- */
+/* ---------- Modern Output Panel (Colored Sentence) ---------- */
 .out-panel {
-    min-height: 220px; padding: 24px; border-radius: 20px; position: relative;
+    min-height: 240px; /* Matches input height roughly */
+    padding: 28px; 
+    border-radius: 24px; 
+    position: relative;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 15px 30px -10px rgba(255, 0, 168, 0.3);
-    font-size: 1.2rem; line-height: 1.7; font-weight: 500; overflow-wrap: anywhere;
+    box-shadow: 0 15px 35px -10px rgba(255, 0, 168, 0.3);
+    font-size: 1.2rem; 
+    line-height: 1.7; 
+    font-weight: 500; 
+    overflow-wrap: anywhere;
 }
 .out-panel.empty { 
     background: #ffffff !important; 
     color: var(--muted) !important; 
     border: 1px dashed rgba(0, 0, 0, 0.1) !important;
-    box-shadow: none !important; 
+    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.05) !important; 
     font-weight: 400; 
 }
 .out-panel.fresh { animation: reveal .4s cubic-bezier(.2,.8,.2,1); }
@@ -167,7 +164,7 @@ div[data-testid="stTextArea"] textarea {
 .side-card {
     background: #ffffff !important; border: 1px solid var(--line); border-radius: 20px;
     padding: 24px; margin-bottom: 24px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 .side-title { font-size: 1rem; font-weight: 800; color: var(--grad-end); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; display:flex; align-items:center; gap:8px;}
 .side-text { font-size: 0.95rem; color: var(--muted); margin-bottom: 10px; display:flex; justify-content:space-between;}
@@ -343,9 +340,6 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-    # Main Glass Container
-    st.markdown('<div class="main-glass">', unsafe_allow_html=True)
-    
     src_is_en = st.session_state.src == "en"
     src_label = '<span class="dot"></span>English' if src_is_en else '<span class="dot"></span><span class="ge">አማርኛ</span>'
     tgt_label = '<span class="dot"></span><span class="ge">አማርኛ</span>' if src_is_en else '<span class="dot"></span>English'
@@ -368,16 +362,15 @@ with col2:
 
     with left:
         st.markdown('<p class="panel-label">Source Text</p>', unsafe_allow_html=True)
+        # Removed the character counter completely
         user_input = st.text_area(
             "Input text",
             key="text",
-            height=200,
+            height=240, # Made slightly taller
             max_chars=500,
             placeholder="Type your text here..." if src_is_en else "እዚህ ይጻፉ...",
             label_visibility="collapsed"
         )
-        char_count = len(user_input)
-        st.markdown(f'<div style="text-align: right; font-size: 0.8rem; color: var(--muted); margin-top: -10px;">{char_count} / 500</div>', unsafe_allow_html=True)
 
     with right:
         st.markdown('<p class="panel-label">Translation</p>', unsafe_allow_html=True)
@@ -400,8 +393,6 @@ with col2:
     _, mid, _ = st.columns([1, 2, 1])
     with mid:
         go = st.button("Translate", type="primary", use_container_width=True)
-
-    st.markdown('</div>', unsafe_allow_html=True) # End of Glass Container
 
     if go:
         if not user_input.strip():
