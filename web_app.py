@@ -21,8 +21,6 @@ st.markdown("""
     --ink: #0F2A2E;
     --muted: #6A7F84;
     --teal: #0E7C86;
-    --teal-deep: #0A5E66;
-    --saffron: #F2A93B;
     --mist: #EAF1F2;
     --glass: rgba(255,255,255,0.72);
     --line: rgba(15,42,46,0.10);
@@ -31,7 +29,6 @@ st.markdown("""
     --cyan: #00E5FF;
     --magenta: #FF007F;
     --purple: #8A2BE2;
-    --dark-panel: #111827;
 }
 
 /* ---------- Canvas ---------- */
@@ -54,7 +51,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
 .brand-mark {
     width: 38px; height: 38px; border-radius: 12px;
-    background: conic-gradient(from 210deg, var(--teal), var(--saffron), var(--teal));
+    background: conic-gradient(from 210deg, var(--cyan), var(--magenta), var(--cyan));
     box-shadow: 0 6px 18px rgba(14,124,134,0.35);
     position: relative;
 }
@@ -103,13 +100,13 @@ header[data-testid="stHeader"] { background: transparent; }
     color: #fff;
 }
 
-/* ---------- Input panel (text area) ---------- */
+/* ---------- Input panel (text area) - REMOVED BLACK ---------- */
 .stTextArea label { display: none; }
 .stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
     background: transparent !important; border: none !important;
 }
 .stTextArea > div > div {
-    background: rgba(255, 255, 255, 0.85) !important; 
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(255, 0, 127, 0.1) 100%) !important; 
     border: 1px solid rgba(0, 229, 255, 0.3) !important; 
     border-radius: 16px;
     backdrop-filter: blur(16px);
@@ -121,7 +118,7 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.15);
 }
 .stTextArea textarea {
-    font-size: 1.15rem !important; line-height: 1.6 !important; color: var(--dark-panel) !important;
+    font-size: 1.15rem !important; line-height: 1.6 !important; color: var(--ink) !important;
     padding: 20px 22px !important; background: transparent !important;
 }
 
@@ -146,7 +143,7 @@ header[data-testid="stHeader"] { background: transparent; }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .panel-label { font-size: 0.85rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
-/* ---------- Translate Button (Exactly matches the screenshot) ---------- */
+/* ---------- Translate Button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
     height: 56px; 
     border-radius: 16px; 
