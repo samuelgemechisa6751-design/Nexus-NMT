@@ -23,9 +23,10 @@ st.markdown("""
     --mist: #EAF1F2;
     --line: rgba(15,42,46,0.08);
     
-    /* The Exact Gradient Colors */
-    --grad-start: #00E5FF; /* Cyan */
-    --grad-end: #FF00A8;   /* Magenta/Pink */
+    /* NEW PALETTE: Midnight Emerald */
+    --grad-start: #00B4D8; /* Bright Teal */
+    --grad-mid: #0077B6;   /* Ocean Blue */
+    --grad-end: #023047;   /* Deep Navy/Emerald */
 }
 
 /* ---------- Canvas ---------- */
@@ -34,8 +35,8 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
 }
 .stApp {
     background:
-        radial-gradient(900px 520px at 8% -8%, rgba(0,124,134,0.15), transparent 60%),
-        radial-gradient(760px 480px at 100% 0%, rgba(242,169,59,0.15), transparent 60%),
+        radial-gradient(900px 520px at 8% -8%, rgba(0,180,216,0.1), transparent 60%),
+        radial-gradient(760px 480px at 100% 0%, rgba(2,48,71,0.08), transparent 60%),
         var(--mist) !important;
     color: var(--ink);
 }
@@ -53,38 +54,34 @@ header[data-testid="stHeader"] { background: transparent !important; }
     flex-direction: column;
 }
 .brand-mark {
-    width: 80px; 
-    height: 80px; 
-    border-radius: 24px;
-    /* Vibrant modern gradient */
-    background: linear-gradient(135deg, #00E5FF 0%, #8A2BE2 50%, #FF00A8 100%) !important;
-    /* Soft colored glow shadow */
-    box-shadow: 0 15px 40px -10px rgba(255, 0, 168, 0.4), 
-                0 0 20px rgba(0, 229, 255, 0.2) !important;
+    width: 85px; 
+    height: 85px; 
+    border-radius: 28px;
+    /* New Emerald Gradient */
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-mid) 50%, var(--grad-end) 100%) !important;
+    /* Soft blue glow shadow */
+    box-shadow: 0 15px 40px -10px rgba(0, 119, 182, 0.4), 
+                0 0 20px rgba(0, 180, 216, 0.2) !important;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-/* The white circle inside the logo */
 .brand-mark::after {
     content: ""; 
-    width: 32px; 
-    height: 32px; 
+    width: 34px; 
+    height: 34px; 
     border-radius: 50%;
     background: #ffffff !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-/* Modern typography for the app name */
 .brand-name { 
     font-weight: 800; 
-    font-size: 2.2rem; 
-    letter-spacing: -0.04em; 
-    /* Dark navy with a subtle gradient */
-    background: linear-gradient(to right, #0F2A2E, #1A3C42);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-top: 8px;
+    font-size: 2.4rem; 
+    letter-spacing: -0.05em; 
+    /* Deep rich color to match the logo */
+    color: #023047 !important; 
+    margin-top: 10px;
     text-align: center;
 }
 
@@ -100,7 +97,7 @@ header[data-testid="stHeader"] { background: transparent !important; }
 .lang-pill.target .dot { background: var(--grad-end) !important; }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.2rem; }
 
-/* ---------- Swap Button (Modern Circular) ---------- */
+/* ---------- Swap Button ---------- */
 .st-key-swap button {
     width: 64px !important; 
     height: 64px !important; 
@@ -116,13 +113,13 @@ header[data-testid="stHeader"] { background: transparent !important; }
     color: #ffffff !important;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     border: none !important;
-    box-shadow: 0 15px 30px -5px rgba(255, 0, 168, 0.5) !important;
+    box-shadow: 0 15px 30px -5px rgba(2, 48, 71, 0.3) !important;
     transition: transform .3s ease, box-shadow .3s ease !important;
 }
 .st-key-swap button * { color: #ffffff !important; background-color: transparent !important; }
 .st-key-swap button:hover { 
     transform: rotate(180deg) scale(1.1) !important; 
-    box-shadow: 0 20px 40px -5px rgba(255, 0, 168, 0.7) !important;
+    box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
 }
 
 /* ---------- Modern Input Panel ---------- */
@@ -135,8 +132,8 @@ div[data-testid="stTextArea"] > div > div > div > div > div {
     transition: all 0.3s ease;
 }
 div[data-testid="stTextArea"] > div > div > div > div > div:focus-within {
-    border-color: rgba(0, 229, 255, 0.5) !important;
-    box-shadow: 0 15px 35px -10px rgba(0, 229, 255, 0.2) !important;
+    border-color: rgba(0, 180, 216, 0.5) !important;
+    box-shadow: 0 15px 35px -10px rgba(0, 180, 216, 0.2) !important;
 }
 div[data-testid="stTextArea"] textarea {
     background-color: #ffffff !important;
@@ -147,7 +144,7 @@ div[data-testid="stTextArea"] textarea {
     border-radius: 24px !important;
 }
 
-/* ---------- Modern Output Panel (Colored Sentence) ---------- */
+/* ---------- Modern Output Panel ---------- */
 .out-panel {
     min-height: 240px; 
     padding: 28px; 
@@ -155,7 +152,7 @@ div[data-testid="stTextArea"] textarea {
     position: relative;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 15px 35px -10px rgba(255, 0, 168, 0.3);
+    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3);
     font-size: 1.2rem; 
     line-height: 1.7; 
     font-weight: 500; 
@@ -172,7 +169,7 @@ div[data-testid="stTextArea"] textarea {
 @keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 10px 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;}
 
-/* ---------- Translate Button (Pill Shape) ---------- */
+/* ---------- Translate Button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
     height: 64px; 
     border-radius: 32px !important; 
@@ -181,13 +178,13 @@ div[data-testid="stTextArea"] textarea {
     font-size: 1.2rem; 
     color: #ffffff !important;
     background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
-    box-shadow: 0 15px 30px -5px rgba(255, 0, 168, 0.4) !important;
+    box-shadow: 0 15px 30px -5px rgba(2, 48, 71, 0.3) !important;
     transition: all .3s ease !important;
     letter-spacing: 0.02em;
 }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
     transform: translateY(-3px) scale(1.02); 
-    box-shadow: 0 20px 40px -5px rgba(255, 0, 168, 0.6) !important; 
+    box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important; 
 }
 
 /* ---------- Sidebar Cards ---------- */
@@ -196,7 +193,7 @@ div[data-testid="stTextArea"] textarea {
     padding: 24px; margin-bottom: 24px; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
-.side-title { font-size: 1rem; font-weight: 800; color: var(--grad-end); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; display:flex; align-items:center; gap:8px;}
+.side-title { font-size: 1rem; font-weight: 800; color: var(--grad-start); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; display:flex; align-items:center; gap:8px;}
 .side-text { font-size: 0.95rem; color: var(--muted); margin-bottom: 10px; display:flex; justify-content:space-between;}
 .side-val { font-weight: 700; color: var(--ink); }
 
@@ -210,8 +207,8 @@ div[data-testid="stTextArea"] textarea {
     font-weight: 600;
 }
 .stButton > button:not([kind="primary"]):hover {
-    border-color: var(--grad-end) !important;
-    color: var(--grad-end) !important;
+    border-color: var(--grad-start) !important;
+    color: var(--grad-start) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -340,7 +337,7 @@ with st.sidebar:
     <div class="side-card">
         <div class="side-title">⚡ AI Status</div>
         <div class="side-text">Model <span class="side-val">Nexus-NMT</span></div>
-        <div class="side-text">Engine <span class="side-val" style="color: #00E5FF;">Active</span></div>
+        <div class="side-text">Engine <span class="side-val" style="color: #00B4D8;">Active</span></div>
         <div class="side-text">Languages <span class="side-val">2</span></div>
     </div>
     """, unsafe_allow_html=True)
@@ -362,7 +359,7 @@ with st.sidebar:
 col1, col2, col3 = st.columns([1, 8, 1])
 
 with col2:
-    # Centered Brand (Updated Modern Style)
+    # Centered Brand (New Emerald Style)
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
