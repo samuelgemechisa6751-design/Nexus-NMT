@@ -22,15 +22,14 @@ st.markdown("""
     --muted: #6A7F84;
     --teal: #0E7C86;
     --mist: #EAF1F2;
-    --glass: rgba(255,255,255,0.72);
     --line: rgba(15,42,46,0.10);
     
-    --cyan: #00E5FF;
-    --magenta: #FF007F;
-    --purple: #8A2BE2;
+    /* The Exact Gradient Colors */
+    --grad-start: #00E5FF; /* Cyan */
+    --grad-end: #FF00A8;   /* Magenta/Pink */
 }
 
-/* ---------- Canvas & Dark Mode Fix ---------- */
+/* ---------- Canvas ---------- */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
     font-family: 'Sora', 'Noto Sans Ethiopic', sans-serif !important;
 }
@@ -41,7 +40,7 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
         radial-gradient(900px 600px at 50% 115%, rgba(14,124,134,0.16), transparent 60%),
         var(--mist);
     color: var(--ink);
-    filter: invert(0); /* Prevents dark mode extension from inverting colors */
+    filter: invert(0); 
 }
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
@@ -51,8 +50,8 @@ header[data-testid="stHeader"] { background: transparent; }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
 .brand-mark {
     width: 38px; height: 38px; border-radius: 12px;
-    background: conic-gradient(from 210deg, var(--cyan), var(--magenta), var(--cyan));
-    box-shadow: 0 6px 18px rgba(14,124,134,0.35);
+    background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+    box-shadow: 0 6px 18px rgba(255, 0, 168, 0.35);
     position: relative;
 }
 .brand-mark::after {
@@ -81,28 +80,26 @@ header[data-testid="stHeader"] { background: transparent; }
     backdrop-filter: blur(14px); color: var(--ink);
     box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 30px -12px rgba(15,42,46,0.18);
 }
-.lang-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
-.lang-pill.target .dot { background: var(--magenta); }
+.lang-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--grad-start); }
+.lang-pill.target .dot { background: var(--grad-end); }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
 
-/* ---------- Swap Button ---------- */
+/* ---------- Swap Button (Exact Gradient) ---------- */
 .st-key-swap .stButton > button {
     width: 52px; height: 52px; min-height: 52px; padding: 0; margin: 0 auto; display: block;
-    border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: #fff;
-    background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 100%);
-    border: none;
-    box-shadow: 0 10px 26px -10px rgba(255, 0, 127, 0.6);
-    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
+    border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: #ffffff !important;
+    background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+    border: none !important;
+    box-shadow: 0 10px 26px -10px rgba(255, 0, 168, 0.6) !important;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease !important;
 }
 .st-key-swap .stButton > button:hover { 
-    transform: rotate(180deg); 
-    box-shadow: 0 12px 30px -8px rgba(255, 0, 127, 0.8);
-    color: #fff;
+    transform: rotate(180deg) scale(1.05) !important; 
+    box-shadow: 0 12px 30px -8px rgba(255, 0, 168, 0.8) !important;
 }
 
-/* ---------- Input panel - SOLID WHITE TO KILL BLACK BOX ---------- */
+/* ---------- Input panel (Solid White) ---------- */
 .stTextArea label { display: none; }
-/* Target every possible wrapper layer in the textarea */
 .stTextArea > div > div,
 .stTextArea > div > div > div,
 .stTextArea [data-baseweb="textarea"], 
@@ -113,33 +110,29 @@ header[data-testid="stHeader"] { background: transparent; }
     border-radius: 16px !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
 }
-
-/* Target the actual typing area */
 .stTextArea textarea {
     background-color: #ffffff !important;
     font-size: 1.15rem !important; 
     line-height: 1.6 !important; 
-    color: #000000 !important; /* Force black text */
+    color: #000000 !important; 
     padding: 20px 22px !important; 
 }
-.stTextArea textarea::placeholder {
-    color: #888888 !important;
-}
+.stTextArea textarea::placeholder { color: #888888 !important; }
 
-/* ---------- Output panel ---------- */
+/* ---------- Output panel (Colored Sentence) ---------- */
 .out-panel {
     min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
-    background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 50%, var(--magenta) 100%);
-    color: #fff; 
-    box-shadow: 0 20px 40px -15px rgba(138, 43, 226, 0.4);
+    background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+    color: #ffffff !important; /* Makes the whole sentence white/colored */
+    box-shadow: 0 20px 40px -15px rgba(255, 0, 168, 0.4);
     font-size: 1.25rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
     border: 1px solid rgba(255,255,255,0.2);
 }
 .out-panel.empty { 
-    background: #ffffff; 
-    color: var(--muted); 
-    border: 1px dashed rgba(0, 0, 0, 0.1);
-    box-shadow: none; 
+    background: #ffffff !important; 
+    color: var(--muted) !important; 
+    border: 1px dashed rgba(0, 0, 0, 0.1) !important;
+    box-shadow: none !important; 
     font-weight: 400; 
     font-size: 1.15rem; 
 }
@@ -147,7 +140,7 @@ header[data-testid="stHeader"] { background: transparent; }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .panel-label { font-size: 0.85rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
-/* ---------- Translate Button ---------- */
+/* ---------- Translate Button (Exact Gradient) ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
     height: 56px; 
     border-radius: 16px; 
@@ -155,10 +148,9 @@ header[data-testid="stHeader"] { background: transparent; }
     font-weight: 500; 
     font-size: 1.1rem; 
     color: #ffffff !important;
-    background: linear-gradient(90deg, #00E5FF 0%, #FF00A8 100%) !important;
+    background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     box-shadow: 0 10px 25px -5px rgba(255, 0, 168, 0.4) !important;
     transition: all .2s ease !important;
-    letter-spacing: 0.02em;
 }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
     transform: translateY(-2px); 
@@ -172,7 +164,7 @@ header[data-testid="stHeader"] { background: transparent; }
     padding: 16px; margin-bottom: 16px; backdrop-filter: blur(12px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
-.side-title { font-size: 0.9rem; font-weight: 700; color: var(--teal); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;}
+.side-title { font-size: 0.9rem; font-weight: 700; color: var(--grad-end); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;}
 .side-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
 .side-val { font-weight: 700; color: var(--ink); }
 
@@ -183,8 +175,8 @@ header[data-testid="stHeader"] { background: transparent; }
     border: 1px solid var(--line) !important;
 }
 .stButton > button:not([kind="primary"]):hover {
-    border-color: var(--cyan) !important;
-    color: var(--cyan) !important;
+    border-color: var(--grad-end) !important;
+    color: var(--grad-end) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -369,6 +361,7 @@ with col_main:
             result = st.session_state.result
             if result:
                 cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
+                # This wraps the whole translated sentence in the colored gradient class
                 out_slot.markdown(f'<div class="{cls}">{html.escape(str(result))}</div>', unsafe_allow_html=True)
             else:
                 out_slot.markdown('<div class="out-panel empty">Your translation will appear here.</div>', unsafe_allow_html=True)
