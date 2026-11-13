@@ -25,13 +25,12 @@ st.markdown("""
     --glass: rgba(255,255,255,0.72);
     --line: rgba(15,42,46,0.10);
     
-    /* Gradient Colors */
     --cyan: #00E5FF;
     --magenta: #FF007F;
     --purple: #8A2BE2;
 }
 
-/* ---------- Canvas ---------- */
+/* ---------- Canvas & Dark Mode Fix ---------- */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
     font-family: 'Sora', 'Noto Sans Ethiopic', sans-serif !important;
 }
@@ -42,6 +41,7 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
         radial-gradient(900px 600px at 50% 115%, rgba(14,124,134,0.16), transparent 60%),
         var(--mist);
     color: var(--ink);
+    filter: invert(0); /* Prevents dark mode extension from inverting colors */
 }
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
@@ -77,7 +77,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .lang-pill {
     display: flex; align-items: center; justify-content: center; gap: 10px;
     height: 52px; border-radius: 16px; font-weight: 600; font-size: 1rem;
-    background: var(--glass); border: 1px solid var(--line);
+    background: #ffffff; border: 1px solid var(--line);
     backdrop-filter: blur(14px); color: var(--ink);
     box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 30px -12px rgba(15,42,46,0.18);
 }
@@ -85,7 +85,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .lang-pill.target .dot { background: var(--magenta); }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
 
-/* ---------- Swap Button (Right Side Style) ---------- */
+/* ---------- Swap Button ---------- */
 .st-key-swap .stButton > button {
     width: 52px; height: 52px; min-height: 52px; padding: 0; margin: 0 auto; display: block;
     border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: #fff;
@@ -100,26 +100,30 @@ header[data-testid="stHeader"] { background: transparent; }
     color: #fff;
 }
 
-/* ---------- Input panel (text area) - REMOVED BLACK ---------- */
+/* ---------- Input panel - SOLID WHITE TO KILL BLACK BOX ---------- */
 .stTextArea label { display: none; }
-.stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
-    background: transparent !important; border: none !important;
+/* Target every possible wrapper layer in the textarea */
+.stTextArea > div > div,
+.stTextArea > div > div > div,
+.stTextArea [data-baseweb="textarea"], 
+.stTextArea [data-baseweb="base-input"] {
+    background-color: #ffffff !important; 
+    background-image: none !important;
+    border: 1px solid rgba(0, 229, 255, 0.4) !important; 
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
 }
-.stTextArea > div > div {
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(255, 0, 127, 0.1) 100%) !important; 
-    border: 1px solid rgba(0, 229, 255, 0.3) !important; 
-    border-radius: 16px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    transition: border-color .2s ease, box-shadow .2s ease;
-}
-.stTextArea > div > div:focus-within {
-    border-color: var(--cyan) !important;
-    box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.15);
-}
+
+/* Target the actual typing area */
 .stTextArea textarea {
-    font-size: 1.15rem !important; line-height: 1.6 !important; color: var(--ink) !important;
-    padding: 20px 22px !important; background: transparent !important;
+    background-color: #ffffff !important;
+    font-size: 1.15rem !important; 
+    line-height: 1.6 !important; 
+    color: #000000 !important; /* Force black text */
+    padding: 20px 22px !important; 
+}
+.stTextArea textarea::placeholder {
+    color: #888888 !important;
 }
 
 /* ---------- Output panel ---------- */
@@ -132,7 +136,7 @@ header[data-testid="stHeader"] { background: transparent; }
     border: 1px solid rgba(255,255,255,0.2);
 }
 .out-panel.empty { 
-    background: rgba(255, 255, 255, 0.4); 
+    background: #ffffff; 
     color: var(--muted); 
     border: 1px dashed rgba(0, 0, 0, 0.1);
     box-shadow: none; 
@@ -164,7 +168,7 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* ---------- Sidebar Cards ---------- */
 .side-card {
-    background: var(--glass); border: 1px solid var(--line); border-radius: 16px;
+    background: #ffffff; border: 1px solid var(--line); border-radius: 16px;
     padding: 16px; margin-bottom: 16px; backdrop-filter: blur(12px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
@@ -174,7 +178,7 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* Clear Input Button Fix */
 .stButton > button:not([kind="primary"]) {
-    background-color: transparent !important;
+    background-color: #ffffff !important;
     color: var(--ink) !important;
     border: 1px solid var(--line) !important;
 }
