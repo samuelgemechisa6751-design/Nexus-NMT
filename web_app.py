@@ -8,149 +8,87 @@ from tokenizers import Tokenizer
 from model import NexusNMT
 
 # ==========================================
-# 1. PAGE CONFIG & ULTIMATE NEON DESIGN SYSTEM
+# 1. PAGE CONFIG & CLEAN MINIMALIST CSS
 # ==========================================
-st.set_page_config(page_title="Nexus-NMT | AI Studio", page_icon="🌌", layout="wide")
+st.set_page_config(page_title="Nexus-NMT | Translator", page_icon="🌐", layout="centered")
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600&display=swap');
 
-:root {
-    --bg-dark: #06060c;
-    --panel-bg: rgba(20, 20, 35, 0.6);
-    --neon-cyan: #00F0FF;
-    --neon-magenta: #FF00E5;
-    --text-main: #FFFFFF;
-    --text-muted: #8B8B9F;
-    --border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* ---------- Canvas & Background ---------- */
+/* Global Styling */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
-    font-family: 'Outfit', 'Noto Sans Ethiopic', sans-serif !important;
+    font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif !important;
 }
-
 .stApp {
-    background: 
-        radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08), transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(255, 0, 229, 0.08), transparent 40%),
-        var(--bg-dark);
-    color: var(--text-main);
+    background-color: #F8FAFC;
+    color: #0F172A;
 }
-
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
-.block-container { max-width: 1200px; padding-top: 2rem; padding-bottom: 4rem; }
 
-/* ---------- Brand bar ---------- */
-.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 3rem; }
-.brand-mark {
-    width: 42px; height: 42px; border-radius: 12px;
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-    position: relative;
-    animation: pulse-glow 3s infinite alternate;
-}
-@keyframes pulse-glow {
-    0% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
-    100% { box-shadow: 0 0 30px rgba(255, 0, 229, 0.6); }
-}
-.brand-name { font-weight: 700; font-size: 1.3rem; letter-spacing: -0.02em; color: var(--text-main); }
-.brand-tag {
-    margin-left: auto; font-size: 0.85rem; color: var(--neon-cyan);
-    padding: 8px 16px; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px;
-    background: rgba(0, 240, 255, 0.05); backdrop-filter: blur(8px);
-    font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-}
+/* Container */
+.block-container { max-width: 900px; padding-top: 3rem; padding-bottom: 4rem; }
 
-/* ---------- Hero ---------- */
+/* Hero Section */
+.hero { text-align: center; margin-bottom: 3rem; }
 .hero-title {
-    font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; line-height: 1.1;
-    letter-spacing: -0.03em; margin: 0 0 1rem 0; max-width: 20ch;
-    background: linear-gradient(to right, #ffffff, #a0a0c0);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 3rem; font-weight: 700; letter-spacing: -0.04em;
+    color: #0F172A; margin-bottom: 1rem; line-height: 1.1;
 }
-.hero-sub { font-size: 1.15rem; color: var(--text-muted); max-width: 50ch; margin-bottom: 2.5rem; line-height: 1.6; }
-
-/* ---------- Language bar ---------- */
-.lang-pill {
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    height: 56px; border-radius: 16px; font-weight: 600; font-size: 1.1rem;
-    background: var(--panel-bg); border: 1px solid var(--border-color);
-    backdrop-filter: blur(16px); color: var(--text-main);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-}
-.lang-pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
-.lang-pill.target .dot { background: var(--neon-magenta); box-shadow: 0 0 10px var(--neon-magenta); }
-
-/* swap button */
-.st-key-swap .stButton > button {
-    width: 56px; height: 56px; min-height: 56px; padding: 0; margin: 0 auto; display: block;
-    border-radius: 50%; font-size: 1.4rem; font-weight: 600;
-    background: var(--panel-bg); color: var(--neon-cyan); border: 1px solid rgba(0, 240, 255, 0.4);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
-    transition: all .4s cubic-bezier(.2,.8,.2,1);
-}
-.st-key-swap .stButton > button:hover { 
-    transform: rotate(180deg) scale(1.1); 
-    border-color: var(--neon-magenta); color: var(--neon-magenta);
-    box-shadow: 0 0 25px rgba(255, 0, 229, 0.4);
+.hero-sub {
+    font-size: 1.15rem; color: #64748B; max-width: 500px;
+    margin: 0 auto; line-height: 1.6;
 }
 
-/* ---------- Input panel (text area) ---------- */
+/* Language Selectors */
+.lang-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 2rem; }
+.lang-box {
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 12px 24px; font-weight: 600; color: #0F172A;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 220px; text-align: center;
+}
+
+/* Text Area Styling */
 .stTextArea label { display: none; }
-.stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
-    background: transparent !important; border: none !important;
-}
 .stTextArea > div > div {
-    background: var(--panel-bg); border: 1px solid var(--border-color) !important; border-radius: 20px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-    transition: all .3s ease;
+    background: #FFFFFF !important; border: 1px solid #E2E8F0 !important;
+    border-radius: 16px !important; box-shadow: 0 4px 6px rgba(0,0,0,0.02) !important;
+    transition: border-color 0.2s ease;
 }
-.stTextArea > div > div:focus-within {
-    border-color: var(--neon-cyan) !important;
-    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15), 0 10px 30px -10px rgba(0,0,0,0.5);
-}
+.stTextArea > div > div:focus-within { border-color: #3B82F6 !important; box-shadow: 0 0 0 3px rgba(59,130,246,0.15) !important; }
 .stTextArea textarea {
-    font-size: 1.35rem !important; line-height: 1.6 !important; color: var(--text-main) !important;
-    padding: 24px !important; background: transparent !important;
-}
-.stTextArea textarea::placeholder { color: #5A5A70 !important; }
-
-/* ---------- Output panel ---------- */
-.out-panel {
-    min-height: 220px; padding: 24px; border-radius: 20px; position: relative;
-    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(255, 0, 229, 0.1) 100%);
-    border: 1px solid rgba(255, 0, 229, 0.3);
-    color: var(--text-main); box-shadow: 0 20px 40px -15px rgba(255, 0, 229, 0.3);
-    font-size: 1.5rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
-}
-.out-panel.empty { background: var(--panel-bg); color: #5A5A70; border: 1px dashed var(--border-color);
-    box-shadow: none; font-weight: 400; font-size: 1.15rem; }
-.panel-label { font-size: 0.9rem; color: var(--text-muted); margin: 0 0 12px 8px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;}
-
-/* ---------- Translate button ---------- */
-.stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-    height: 60px; border-radius: 16px; border: none; font-weight: 700; font-size: 1.2rem; color: #000;
-    background: linear-gradient(90deg, var(--neon-cyan) 0%, #00B4D8 100%);
-    box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.6);
-    transition: all .3s ease;
-    letter-spacing: 1px;
-}
-.stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
-    transform: translateY(-3px); 
-    box-shadow: 0 15px 40px -10px rgba(0, 240, 255, 0.8);
-    background: linear-gradient(90deg, var(--neon-magenta) 0%, #FF00AA 100%);
-    color: #fff;
+    font-size: 1.25rem !important; padding: 20px !important; color: #0F172A !important;
 }
 
-/* ---------- Footer stats ---------- */
-.stats { display: flex; justify-content: center; gap: 40px; margin-top: 4rem; }
-.stat { text-align: center; }
-.stat b { display: block; font-size: 1.8rem; font-weight: 800; color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-.stat span { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+/* Output Box */
+.output-container {
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px;
+    padding: 24px; min-height: 200px; font-size: 1.35rem; font-weight: 500;
+    color: #0F172A; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+.output-container.empty { color: #94A3B8; font-weight: 400; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; }
+
+/* Button */
+.stButton > button {
+    background: #0F172A; color: #FFFFFF; border-radius: 12px;
+    padding: 14px 28px; font-weight: 600; font-size: 1.05rem;
+    border: none; width: 100%; transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(15,23,42,0.1);
+}
+.stButton > button:hover {
+    background: #1E293B; transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(15,23,42,0.15); color: #FFFFFF;
+}
+
+/* Stats Footer */
+.stats-row { display: flex; justify-content: center; gap: 40px; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #E2E8F0; }
+.stat-item { text-align: center; }
+.stat-val { font-size: 1.5rem; font-weight: 700; color: #0F172A; }
+.stat-lbl { font-size: 0.85rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+/* Hide the ugly Streamlit warning box */
+.stAlert { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -171,8 +109,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        # 🚀 UPDATE THIS TO YOUR LATEST CHECKPOINT (110000)
-        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_110000.pt", token=hf_token)
+        # 🚀 USING THE 80000 CHECKPOINT AS REQUESTED
+        weights_path = hf_hub_download(repo_id=repo_id, filename="final_bidir_epoch1_batch_80000.pt", token=hf_token)
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
 
         if "model_state_dict" in checkpoint:
@@ -188,19 +126,16 @@ def load_model():
         st.stop()
 
 # ==========================================
-# 3. BRAND + HERO
+# 3. HEADER
 # ==========================================
 st.markdown("""
-<div class="brand">
-    <div class="brand-mark"></div>
-    <div class="brand-name">Nexus-NMT</div>
-    <div class="brand-tag">Next-Gen Translation</div>
+<div class="hero">
+    <h1 class="hero-title">Nexus-NMT</h1>
+    <p class="hero-sub">A custom 60-Million parameter Transformer trained from scratch on 3.2 Million sentence pairs.</p>
 </div>
-<h1 class="hero-title">Break the language barrier.</h1>
-<p class="hero-sub">A custom 60M-parameter Transformer trained on 3.2 million sentence pairs. Accurate, bidirectional, and built entirely from scratch.</p>
 """, unsafe_allow_html=True)
 
-with st.spinner("Initializing Neural Network..."):
+with st.spinner("Loading..."):
     model, tokenizer, device = load_model()
 
 # ==========================================
@@ -211,10 +146,8 @@ def translate(text, to_amharic):
     eos_id = tokenizer.token_to_id("</s>") or 2
     unk_id = tokenizer.token_to_id("<unk>") or 3
     pad_id = tokenizer.token_to_id("<pad>") or 1
-
     tag_2am = tokenizer.token_to_id("<2am>")
     tag_2en = tokenizer.token_to_id("<2en>")
-
     tag_id = tag_2am if to_amharic else tag_2en
 
     src_ids = [tag_id] + tokenizer.encode(text).ids + [eos_id]
@@ -226,132 +159,97 @@ def translate(text, to_amharic):
 
     with torch.no_grad():
         beam = [(0.0, [bos_id])]
-
         for step in range(max_len):
             new_beam = []
             for log_prob, tgt_ids in beam:
                 tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
                 logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
-
+                
                 logits[pad_id] = -float('inf')
                 logits[unk_id] = -float('inf')
                 logits[bos_id] = -float('inf')
                 logits[tag_2am] = -float('inf')
                 logits[tag_2en] = -float('inf')
-
-                if step < min_len:
-                    logits[eos_id] = -float('inf')
-
+                
+                if step < min_len: logits[eos_id] = -float('inf')
                 for token in set(tgt_ids):
-                    if token not in [bos_id, eos_id]:
-                        logits[token] -= 15.0
+                    if token not in [bos_id, eos_id]: logits[token] -= 15.0
 
                 log_probs = F.log_softmax(logits, dim=-1)
                 topk_probs, topk_ids = torch.topk(log_probs, beam_width)
-
+                
                 for i in range(beam_width):
-                    new_log_prob = log_prob + topk_probs[i].item()
-                    new_ids = tgt_ids + [topk_ids[i].item()]
-                    new_beam.append((new_log_prob, new_ids))
-
+                    new_beam.append((log_prob + topk_probs[i].item(), tgt_ids + [topk_ids[i].item()]))
+            
             new_beam.sort(key=lambda x: x[0], reverse=True)
             beam = new_beam[:beam_width]
+            if all(b[1][-1] == eos_id for b in beam): break
 
-            if all(b[1][-1] == eos_id for b in beam):
-                break
-
-    best_sentence_ids = beam[0][1]
-    clean_text = tokenizer.decode(best_sentence_ids)
-
+    clean_text = tokenizer.decode(beam[0][1])
     for tag in ["<s>", "</s>", "<pad>", "<unk>", "<2am>", "<2en>"]:
         clean_text = clean_text.replace(tag, "")
-
-    clean_text = clean_text.replace("Ġ", " ").strip()
-    return clean_text or "[Empty response]"
+    return clean_text.replace("Ġ", " ").strip() or "[Empty response]"
 
 # ==========================================
-# 5. UI STATE + INTERACTION
+# 5. UI INTERACTION
 # ==========================================
-SAMPLES = {
-    "en": "The president spoke to the nation.",
-    "am": "ፕሬዝዳንቱ ለህዝቡ ተናገሩ።",
-}
+if "src_is_en" not in st.session_state:
+    st.session_state.src_is_en = True
 
-if "src" not in st.session_state:
-    st.session_state.src = "en"
-    st.session_state.text = SAMPLES["en"]
-    st.session_state.result = None
-    st.session_state.fresh = False
+def toggle_lang():
+    st.session_state.src_is_en = not st.session_state.src_is_en
 
-def swap_languages():
-    previous = st.session_state.result
-    st.session_state.src = "am" if st.session_state.src == "en" else "en"
-    st.session_state.text = previous if previous else SAMPLES[st.session_state.src]
-    st.session_state.result = None
-    st.session_state.fresh = False
+src_is_en = st.session_state.src_is_en
+src_lang = "English" if src_is_en else "አማርኛ (Amharic)"
+tgt_lang = "አማርኛ (Amharic)" if src_is_en else "English"
 
-src_is_en = st.session_state.src == "en"
-src_label = '<span class="dot"></span> English' if src_is_en else '<span class="dot"></span> አማርኛ (Amharic)'
-tgt_label = '<span class="dot"></span> አማርኛ (Amharic)' if src_is_en else '<span class="dot"></span> English'
+st.markdown(f'''
+<div class="lang-row">
+    <div class="lang-box">{src_lang}</div>
+    <div class="lang-box">{tgt_lang}</div>
+</div>
+''', unsafe_allow_html=True)
 
-c1, c2, c3 = st.columns([5, 1.1, 5], vertical_alignment="center")
-with c1:
-    st.markdown(f'<div class="lang-pill">{src_label}</div>', unsafe_allow_html=True)
-with c2:
-    with st.container(key="swap"):
-        st.button("⇄", on_click=swap_languages, help="Swap languages")
-with c3:
-    st.markdown(f'<div class="lang-pill target">{tgt_label}</div>', unsafe_allow_html=True)
+# Hidden button to trigger swap
+st.button("Swap Languages ⇄", on_click=toggle_lang, use_container_width=False)
 
-st.write("")
+col1, col2 = st.columns(2, gap="large")
 
-left, right = st.columns(2, gap="large")
-
-with left:
-    st.markdown('<p class="panel-label">Source Text</p>', unsafe_allow_html=True)
+with col1:
     user_input = st.text_area(
-        "Input text",
-        key="text",
-        height=240,
+        "Input",
+        value="The president spoke to the nation." if src_is_en else "ፕሬዝዳንቱ ለህዝቡ ተናገሩ።",
+        height=200,
         max_chars=500,
-        placeholder="Type an English sentence..." if src_is_en else "አማርኛ ዓረፍተ ነገር እዚህ ይጻፉ...",
     )
 
-with right:
-    st.markdown('<p class="panel-label">Translation</p>', unsafe_allow_html=True)
+with col2:
     out_slot = st.empty()
-
-def render_output():
-    result = st.session_state.result
-    if result:
-        cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
-        out_slot.markdown(f'<div class="{cls}">{html.escape(result)}</div>', unsafe_allow_html=True)
-    else:
-        out_slot.markdown('<div class="out-panel empty">Translation will appear here.</div>', unsafe_allow_html=True)
-
-render_output()
+    def render_output(val):
+        if val:
+            out_slot.markdown(f'<div class="output-container">{html.escape(val)}</div>', unsafe_allow_html=True)
+        else:
+            out_slot.markdown('<div class="output-container empty">Translation will appear here</div>', unsafe_allow_html=True)
+    render_output(None)
 
 st.write("")
-_, mid, _ = st.columns([1, 2, 1])
-with mid:
-    go = st.button("TRANSLATE NOW ✨", type="primary", use_container_width=True)
-
-if go:
-    if not user_input.strip():
-        st.warning("Please enter some text to translate.")
-    else:
-        with st.spinner("Processing..."):
-            st.session_state.result = translate(user_input, to_amharic=src_is_en)
-            st.session_state.fresh = True
-        render_output()
+_, btn_col, _ = st.columns([1, 2, 1])
+with btn_col:
+    if st.button("Translate", use_container_width=True):
+        if not user_input.strip():
+            pass # Hidden warning
+        else:
+            with st.spinner("Translating..."):
+                result = translate(user_input, to_amharic=src_is_en)
+                render_output(result)
 
 # ==========================================
 # 6. FOOTER
 # ==========================================
 st.markdown("""
-<div class="stats">
-    <div class="stat"><b>60M</b><span>Parameters</span></div>
-    <div class="stat"><b>40k</b><span>Vocabulary</span></div>
-    <div class="stat"><b>3.2M</b><span>Training Pairs</span></div>
+<div class="stats-row">
+    <div class="stat-item"><div class="stat-val">60M</div><div class="stat-lbl">Parameters</div></div>
+    <div class="stat-item"><div class="stat-val">40k</div><div class="stat-lbl">Vocabulary</div></div>
+    <div class="stat-item"><div class="stat-val">3.2M</div><div class="stat-lbl">Data Pairs</div></div>
 </div>
 """, unsafe_allow_html=True)
