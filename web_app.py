@@ -70,7 +70,7 @@ header[data-testid="stHeader"] { background: transparent; }
     font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.08;
     letter-spacing: -0.03em; color: var(--ink); margin: 0 0 0.9rem 0;
 }
-.hero-sub { font-size: 1.05rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.6; }
+/* Note: .hero-sub was removed as requested */
 
 /* ---------- Language bar ---------- */
 .lang-pill {
@@ -123,7 +123,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .out-panel {
     min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
     background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
-    color: #ffffff !important; /* Makes the whole sentence white/colored */
+    color: #ffffff !important;
     box-shadow: 0 20px 40px -15px rgba(255, 0, 168, 0.4);
     font-size: 1.25rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
     border: 1px solid rgba(255,255,255,0.2);
@@ -315,6 +315,7 @@ with col_left:
 
 # --- CENTER (Your Exact UI) ---
 with col_main:
+    # Removed the paragraph (hero-sub) as requested
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
@@ -322,7 +323,6 @@ with col_main:
         <div class="brand-tag">Built from scratch, no pretrained model</div>
     </div>
     <h1 class="hero-title">Translate between English and Amharic</h1>
-    <p class="hero-sub">A 60M-parameter Transformer trained on 3.2 million sentence pairs. Type a sentence, press translate.</p>
     """, unsafe_allow_html=True)
 
     src_is_en = st.session_state.src == "en"
@@ -361,7 +361,6 @@ with col_main:
             result = st.session_state.result
             if result:
                 cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
-                # This wraps the whole translated sentence in the colored gradient class
                 out_slot.markdown(f'<div class="{cls}">{html.escape(str(result))}</div>', unsafe_allow_html=True)
             else:
                 out_slot.markdown('<div class="out-panel empty">Your translation will appear here.</div>', unsafe_allow_html=True)
