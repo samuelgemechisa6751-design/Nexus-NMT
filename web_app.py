@@ -92,13 +92,13 @@ header[data-testid="stHeader"] { background: transparent; }
 }
 .st-key-swap .stButton > button:hover { transform: rotate(180deg); border-color: var(--teal); color: var(--teal-deep); }
 
-/* ---------- Input panel (text area) ---------- */
+/* ---------- Input panel (text area) - FIXED BLACK BACKGROUND ---------- */
 .stTextArea label { display: none; }
 .stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
     background: transparent !important; border: none !important;
 }
 .stTextArea > div > div {
-    background: var(--glass); border: 1px solid var(--line) !important; border-radius: 24px;
+    background: var(--glass) !important; border: 1px solid var(--line) !important; border-radius: 24px;
     backdrop-filter: blur(16px);
     box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 24px 50px -24px rgba(15,42,46,0.28);
     transition: border-color .2s ease, box-shadow .2s ease;
@@ -107,10 +107,12 @@ header[data-testid="stHeader"] { background: transparent; }
     border-color: var(--teal) !important;
     box-shadow: 0 0 0 4px rgba(14,124,134,0.14), 0 24px 50px -24px rgba(15,42,46,0.28);
 }
+/* Force light background and dark text for textarea to fix the black part */
 .stTextArea textarea {
     font-size: 1.35rem !important; line-height: 1.6 !important; color: var(--ink) !important;
     padding: 22px 24px !important; background: transparent !important;
 }
+.stTextArea textarea::placeholder { color: #9FB0B4 !important; }
 
 /* ---------- Output panel ---------- */
 .out-panel {
@@ -141,13 +143,6 @@ header[data-testid="stHeader"] { background: transparent; }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
     transform: translateY(-2px); box-shadow: 0 22px 40px -14px rgba(14,124,134,0.9); color: #fff;
 }
-
-/* ---------- Footer stats ---------- */
-.stats { display: flex; justify-content: center; gap: 0; margin-top: 3rem; flex-wrap: wrap; }
-.stat { padding: 4px 34px; text-align: center; border-right: 1px solid var(--line); }
-.stat:last-child { border-right: none; }
-.stat b { display: block; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
-.stat span { font-size: 0.82rem; color: var(--muted); }
 
 /* ---------- Sidebar Cards ---------- */
 .side-card {
@@ -366,20 +361,12 @@ with col_main:
                 st.session_state.fresh = True
                 st.session_state.history.append({"src": user_input, "tgt": st.session_state.result})
             
-            # Using try/except to support older streamlit versions safely
             try:
                 st.rerun()
             except AttributeError:
                 st.experimental_rerun()
 
-    # FOOTER
-    st.markdown("""
-    <div class="stats">
-        <div class="stat"><b>60M</b><span>parameters</span></div>
-        <div class="stat"><b>40k</b><span>BPE vocabulary</span></div>
-        <div class="stat"><b>3.2M</b><span>training pairs</span></div>
-    </div>
-    """, unsafe_allow_html=True)
+    # NOTE: The bottom stats (60M, 40k, 3.2M) have been completely removed as requested.
 
 # --- RIGHT SIDEBAR (Tools & Info) ---
 with col_right:
