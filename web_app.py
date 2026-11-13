@@ -26,6 +26,12 @@ st.markdown("""
     --mist: #EAF1F2;
     --glass: rgba(255,255,255,0.72);
     --line: rgba(15,42,46,0.10);
+    
+    /* New Vibrant Gradient Colors */
+    --cyan: #00E5FF;
+    --magenta: #FF007F;
+    --purple: #8A2BE2;
+    --dark-panel: #111827;
 }
 
 /* ---------- Canvas ---------- */
@@ -79,69 +85,81 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 30px -12px rgba(15,42,46,0.18);
 }
 .lang-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
-.lang-pill.target .dot { background: var(--saffron); }
+.lang-pill.target .dot { background: var(--magenta); } /* Changed dot color to match theme */
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
 
-/* swap button */
+/* ---------- Swap Button (Right Side Style) ---------- */
 .st-key-swap .stButton > button {
     width: 52px; height: 52px; min-height: 52px; padding: 0; margin: 0 auto; display: block;
-    border-radius: 50%; font-size: 1.25rem; font-weight: 600;
-    background: #fff; color: var(--teal); border: 1px solid var(--line);
-    box-shadow: 0 10px 26px -10px rgba(14,124,134,0.5);
+    border-radius: 50%; font-size: 1.25rem; font-weight: 600; color: #fff;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 100%);
+    border: none;
+    box-shadow: 0 10px 26px -10px rgba(255, 0, 127, 0.6);
     transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
 }
-.st-key-swap .stButton > button:hover { transform: rotate(180deg); border-color: var(--teal); color: var(--teal-deep); }
+.st-key-swap .stButton > button:hover { 
+    transform: rotate(180deg); 
+    box-shadow: 0 12px 30px -8px rgba(255, 0, 127, 0.8);
+    color: #fff;
+}
 
-/* ---------- Input panel (text area) - FIXED BLACK BACKGROUND ---------- */
+/* ---------- Input panel (text area) - NO BLACK BACKGROUND ---------- */
 .stTextArea label { display: none; }
 .stTextArea [data-baseweb="textarea"], .stTextArea [data-baseweb="base-input"] {
     background: transparent !important; border: none !important;
 }
 .stTextArea > div > div {
-    background: var(--glass) !important; border: 1px solid var(--line) !important; border-radius: 24px;
+    background: rgba(255, 255, 255, 0.85) !important; 
+    border: 1px solid rgba(0, 229, 255, 0.3) !important; 
+    border-radius: 16px;
     backdrop-filter: blur(16px);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 24px 50px -24px rgba(15,42,46,0.28);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     transition: border-color .2s ease, box-shadow .2s ease;
 }
 .stTextArea > div > div:focus-within {
-    border-color: var(--teal) !important;
-    box-shadow: 0 0 0 4px rgba(14,124,134,0.14), 0 24px 50px -24px rgba(15,42,46,0.28);
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.15);
 }
-/* Force light background and dark text for textarea to fix the black part */
+/* Force dark text on light background */
 .stTextArea textarea {
-    font-size: 1.35rem !important; line-height: 1.6 !important; color: var(--ink) !important;
-    padding: 22px 24px !important; background: transparent !important;
+    font-size: 1.15rem !important; line-height: 1.6 !important; color: var(--dark-panel) !important;
+    padding: 20px 22px !important; background: transparent !important;
 }
-.stTextArea textarea::placeholder { color: #9FB0B4 !important; }
 
-/* ---------- Output panel ---------- */
+/* ---------- Output panel (Vibrant Gradient) ---------- */
 .out-panel {
-    min-height: 220px; padding: 22px 24px; border-radius: 24px; position: relative;
-    background: linear-gradient(160deg, var(--teal-deep) 0%, var(--teal) 100%);
-    color: #fff; box-shadow: 0 30px 60px -26px rgba(10,94,102,0.75);
-    font-size: 1.45rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
+    min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 50%, var(--magenta) 100%);
+    color: #fff; 
+    box-shadow: 0 20px 40px -15px rgba(138, 43, 226, 0.4);
+    font-size: 1.25rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
+    border: 1px solid rgba(255,255,255,0.2);
 }
-.out-panel::before {
-    content: ""; position: absolute; right: -50px; top: -50px; width: 180px; height: 180px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(242,169,59,0.55), transparent 70%);
-    pointer-events: none;
+.out-panel.empty { 
+    background: rgba(255, 255, 255, 0.4); 
+    color: var(--muted); 
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+    box-shadow: none; 
+    font-weight: 400; 
+    font-size: 1.15rem; 
 }
-.out-panel.empty { background: var(--glass); color: #9FB0B4; border: 1px dashed rgba(15,42,46,0.22);
-    box-shadow: none; font-weight: 400; font-size: 1.15rem; }
-.out-panel.empty::before { display: none; }
 .out-panel.fresh { animation: reveal .5s cubic-bezier(.2,.8,.2,1); }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.panel-label { font-size: 0.82rem; color: var(--muted); margin: 0 0 8px 6px; }
+.panel-label { font-size: 0.85rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
 /* ---------- Translate button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-    height: 56px; border-radius: 16px; border: none; font-weight: 700; font-size: 1.05rem; color: #fff;
-    background: linear-gradient(120deg, var(--teal) 0%, var(--teal-deep) 100%);
-    box-shadow: 0 16px 34px -14px rgba(14,124,134,0.8);
+    height: 56px; border-radius: 12px; border: none; font-weight: 700; font-size: 1.05rem; color: #fff;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--magenta) 100%);
+    box-shadow: 0 16px 34px -14px rgba(255, 0, 127, 0.6);
     transition: transform .2s ease, box-shadow .2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
-    transform: translateY(-2px); box-shadow: 0 22px 40px -14px rgba(14,124,134,0.9); color: #fff;
+    transform: translateY(-2px); 
+    box-shadow: 0 22px 40px -14px rgba(255, 0, 127, 0.8); 
+    color: #fff;
 }
 
 /* ---------- Sidebar Cards ---------- */
@@ -153,6 +171,17 @@ header[data-testid="stHeader"] { background: transparent; }
 .side-title { font-size: 0.9rem; font-weight: 700; color: var(--teal); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;}
 .side-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
 .side-val { font-weight: 700; color: var(--ink); }
+
+/* Clear Input Button Fix */
+.stButton > button:not([kind="primary"]) {
+    background-color: transparent !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+}
+.stButton > button:not([kind="primary"]):hover {
+    border-color: var(--cyan) !important;
+    color: var(--cyan) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -365,8 +394,6 @@ with col_main:
                 st.rerun()
             except AttributeError:
                 st.experimental_rerun()
-
-    # NOTE: The bottom stats (60M, 40k, 3.2M) have been completely removed as requested.
 
 # --- RIGHT SIDEBAR (Tools & Info) ---
 with col_right:
