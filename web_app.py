@@ -143,12 +143,11 @@ def load_model():
         st.stop()
 
 # ==========================================
-# 3. HEADER
+# 3. HEADER (Subtitle Removed)
 # ==========================================
 st.markdown("""
 <div class="hero">
     <h1 class="hero-title">Nexus-NMT</h1>
-    <p class="hero-sub">A custom 60-Million parameter Transformer trained from scratch on 3.2 Million sentence pairs.</p>
 </div>
 """, unsafe_allow_html=True)
 
