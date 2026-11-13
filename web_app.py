@@ -20,7 +20,6 @@ st.markdown("""
 :root {
     --ink: #0F2A2E;
     --muted: #6A7F84;
-    --teal: #0E7C86;
     --mist: #EAF1F2;
     --line: rgba(15,42,46,0.10);
     
@@ -29,7 +28,7 @@ st.markdown("""
     --grad-end: #FF00A8;   /* Magenta/Pink */
 }
 
-/* ---------- Canvas ---------- */
+/* ---------- Canvas & Global Overrides ---------- */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
     font-family: 'Sora', 'Noto Sans Ethiopic', sans-serif !important;
 }
@@ -40,7 +39,6 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
         radial-gradient(900px 600px at 50% 115%, rgba(14,124,134,0.16), transparent 60%),
         var(--mist);
     color: var(--ink);
-    filter: invert(0); 
 }
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
@@ -49,85 +47,89 @@ header[data-testid="stHeader"] { background: transparent; }
 /* ---------- Brand bar ---------- */
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
 .brand-mark {
-    width: 38px; height: 38px; border-radius: 12px;
+    width: 42px; height: 42px; border-radius: 12px;
     background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
     box-shadow: 0 6px 18px rgba(255, 0, 168, 0.35);
     position: relative;
 }
 .brand-mark::after {
-    content: ""; position: absolute; inset: 9px; border-radius: 50%;
-    background: var(--mist);
+    content: ""; position: absolute; inset: 10px; border-radius: 50%;
+    background: #ffffff;
 }
-.brand-name { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; color: var(--ink); }
+.brand-name { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; color: var(--ink); }
 
 /* ---------- Language bar ---------- */
 .lang-pill {
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    height: 52px; border-radius: 16px; font-weight: 600; font-size: 1rem;
+    height: 56px; border-radius: 16px; font-weight: 600; font-size: 1.05rem;
     background: #ffffff; border: 1px solid var(--line);
-    backdrop-filter: blur(14px); color: var(--ink);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 30px -12px rgba(15,42,46,0.18);
+    color: var(--ink);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
-.lang-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--grad-start); }
+.lang-pill .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad-start); }
 .lang-pill.target .dot { background: var(--grad-end); }
-.lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.1rem; }
+.lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.15rem; }
 
-/* ---------- Swap Button (Force Gradient & Remove Black) ---------- */
-.st-key-swap .stButton > button {
-    width: 52px !important; 
-    height: 52px !important; 
-    min-height: 52px !important; 
+/* ---------- Swap Button (Exact Gradient & No Black) ---------- */
+.st-key-swap .stButton > button,
+.st-key-swap .stButton > button:focus,
+.st-key-swap .stButton > button:active {
+    width: 56px !important; 
+    height: 56px !important; 
+    min-height: 56px !important; 
     padding: 0 !important; 
     margin: 0 auto !important; 
     display: block !important;
-    border-radius: 16px !important; /* Slightly squarish as in your latest screenshot */
-    font-size: 1.25rem !important; 
+    border-radius: 16px !important; 
+    font-size: 1.5rem !important; 
     font-weight: 600 !important; 
     color: #ffffff !important;
-    background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     border: none !important;
-    box-shadow: 0 10px 26px -10px rgba(255, 0, 168, 0.6) !important;
-    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease !important;
+    box-shadow: 0 8px 20px -5px rgba(255, 0, 168, 0.5) !important;
+    transition: transform .3s ease, box-shadow .3s ease !important;
 }
-/* Target inner elements to kill the black background */
-.st-key-swap .stButton > button > div,
-.st-key-swap .stButton > button > div > p,
-.st-key-swap .stButton > button [data-testid="stMarkdownContainer"] {
+/* Force text inside button to white */
+.st-key-swap .stButton > button * {
     color: #ffffff !important;
-    background: transparent !important;
 }
 .st-key-swap .stButton > button:hover { 
     transform: rotate(180deg) scale(1.05) !important; 
-    box-shadow: 0 12px 30px -8px rgba(255, 0, 168, 0.8) !important;
+    box-shadow: 0 12px 25px -5px rgba(255, 0, 168, 0.7) !important;
 }
 
-/* ---------- Input panel (Solid White) ---------- */
+/* ---------- Input panel (Aggressively Forced Solid White) ---------- */
 .stTextArea label { display: none; }
+/* Target every possible wrapper to kill dark mode backgrounds */
+.stTextArea > div,
 .stTextArea > div > div,
 .stTextArea > div > div > div,
 .stTextArea [data-baseweb="textarea"], 
-.stTextArea [data-baseweb="base-input"] {
+.stTextArea [data-baseweb="base-input"],
+.stTextArea .st-emotion-cache-1wbqy5l { 
     background-color: #ffffff !important; 
-    background-image: none !important;
-    border: 1px solid rgba(0, 229, 255, 0.4) !important; 
+    background: #ffffff !important;
     border-radius: 16px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}
+.stTextArea > div > div {
+    border: 1px solid rgba(0, 229, 255, 0.3) !important; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
 }
 .stTextArea textarea {
     background-color: #ffffff !important;
     font-size: 1.15rem !important; 
     line-height: 1.6 !important; 
-    color: #000000 !important; 
+    color: #0F2A2E !important; 
     padding: 20px 22px !important; 
 }
-.stTextArea textarea::placeholder { color: #888888 !important; }
+.stTextArea textarea::placeholder { color: #9FB0B4 !important; }
 
 /* ---------- Output panel (Colored Sentence) ---------- */
 .out-panel {
     min-height: 220px; padding: 22px 24px; border-radius: 16px; position: relative;
-    background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 20px 40px -15px rgba(255, 0, 168, 0.4);
+    box-shadow: 0 15px 30px -10px rgba(255, 0, 168, 0.3);
     font-size: 1.25rem; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere;
     border: 1px solid rgba(255,255,255,0.2);
 }
@@ -139,17 +141,17 @@ header[data-testid="stHeader"] { background: transparent; }
     font-weight: 400; 
     font-size: 1.15rem; 
 }
-.out-panel.fresh { animation: reveal .5s cubic-bezier(.2,.8,.2,1); }
+.out-panel.fresh { animation: reveal .4s cubic-bezier(.2,.8,.2,1); }
 @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.panel-label { font-size: 0.85rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
+.panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 8px 4px; font-weight: 600; }
 
 /* ---------- Translate Button (Exact Gradient) ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
     height: 56px; 
     border-radius: 16px; 
     border: none; 
-    font-weight: 500; 
-    font-size: 1.1rem; 
+    font-weight: 600; 
+    font-size: 1.15rem; 
     color: #ffffff !important;
     background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     box-shadow: 0 10px 25px -5px rgba(255, 0, 168, 0.4) !important;
@@ -164,11 +166,11 @@ header[data-testid="stHeader"] { background: transparent; }
 /* ---------- Sidebar Cards ---------- */
 .side-card {
     background: #ffffff; border: 1px solid var(--line); border-radius: 16px;
-    padding: 16px; margin-bottom: 16px; backdrop-filter: blur(12px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    padding: 20px; margin-bottom: 20px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
-.side-title { font-size: 0.9rem; font-weight: 700; color: var(--grad-end); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;}
-.side-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+.side-title { font-size: 0.95rem; font-weight: 700; color: var(--grad-end); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;}
+.side-text { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; }
 .side-val { font-weight: 700; color: var(--ink); }
 
 /* Clear Input Button Fix */
@@ -176,6 +178,7 @@ header[data-testid="stHeader"] { background: transparent; }
     background-color: #ffffff !important;
     color: var(--ink) !important;
     border: 1px solid var(--line) !important;
+    border-radius: 12px !important;
 }
 .stButton > button:not([kind="primary"]):hover {
     border-color: var(--grad-end) !important;
@@ -300,7 +303,7 @@ def clear_input():
     st.session_state.fresh = False
 
 # ==========================================
-# 5. MAIN LAYOUT (WITH SIDEBARS)
+# 5. MAIN LAYOUT
 # ==========================================
 col_left, col_main, col_right = st.columns([1, 2.5, 1], gap="large")
 
@@ -316,9 +319,8 @@ with col_left:
             st.markdown(f'<div class="side-text"><b>{html.escape(src_str)}...</b><br>{html.escape(tgt_str)}...</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- CENTER (Your Exact UI) ---
+# --- CENTER ---
 with col_main:
-    # Kept only the brand name and mark. Removed the text below it.
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
