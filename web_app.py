@@ -28,29 +28,41 @@ html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
 /* Hide standard Streamlit elements */
 header[data-testid="stHeader"] { background: transparent; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
-.block-container { max-width: 1000px; padding-top: 3rem; padding-bottom: 4rem; }
+.block-container { max-width: 900px; padding-top: 3rem; padding-bottom: 3rem; }
 
 /* Hero Section */
-.hero { text-align: center; margin-bottom: 3rem; }
+.hero { text-align: center; margin-bottom: 2rem; }
 .hero-title {
     font-size: 3.5rem; font-weight: 800; letter-spacing: -0.03em;
     background: linear-gradient(90deg, #00F0FF, #FF00E5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 1rem; line-height: 1.1;
-}
-.hero-sub {
-    font-size: 1.15rem; color: #A0AAB5; max-width: 600px;
-    margin: 0 auto; line-height: 1.6;
+    margin-bottom: 0; line-height: 1.1;
 }
 
 /* Language Selectors */
-.lang-row { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 2rem; }
 .lang-box {
     background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.3); 
-    border-radius: 12px; padding: 12px 24px; font-weight: 600; color: #00F0FF;
-    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1); width: 220px; text-align: center;
-    backdrop-filter: blur(10px);
+    border-radius: 12px; padding: 12px 10px; font-weight: 600; color: #00F0FF;
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.1); width: 100%; text-align: center;
+    backdrop-filter: blur(10px); font-size: 1rem;
+}
+
+/* Smart Circular Swap Button */
+.st-key-swap_btn button {
+    background: linear-gradient(90deg, #00F0FF, #FF00E5) !important;
+    color: #000000 !important;
+    border-radius: 50% !important;
+    width: 46px !important; height: 46px !important;
+    padding: 0 !important; font-size: 1.3rem !important; font-weight: 800 !important;
+    box-shadow: 0 0 15px rgba(255, 0, 229, 0.4) !important;
+    margin: 0 auto !important; display: flex !important; 
+    align-items: center !important; justify-content: center !important;
+    border: none !important; transition: all 0.3s ease !important;
+}
+.st-key-swap_btn button:hover {
+    transform: rotate(180deg) scale(1.1) !important;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.6) !important;
 }
 
 /* Input Text Area */
@@ -67,22 +79,21 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 0 15px rgba(255, 0, 229, 0.3) !important; 
 }
 .stTextArea textarea {
-    font-size: 1.25rem !important; padding: 20px !important; 
-    color: #FFFFFF !important; /* FORCED WHITE TEXT */
-    background: transparent !important;
+    font-size: 1.15rem !important; padding: 20px !important; 
+    color: #FFFFFF !important; background: transparent !important;
 }
 
 /* Output Box */
 .output-container {
     background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 229, 0.1)); 
     border: 1px solid rgba(0, 240, 255, 0.5); border-radius: 16px;
-    padding: 24px; min-height: 200px; font-size: 1.35rem; font-weight: 500;
+    padding: 20px; min-height: 185px; font-size: 1.25rem; font-weight: 500;
     color: #FFFFFF; line-height: 1.6; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
     backdrop-filter: blur(10px);
 }
 .output-container.empty { 
     background: rgba(255, 255, 255, 0.03); color: #6A7F84; font-weight: 400; 
-    font-size: 1.15rem; display: flex; align-items: center; justify-content: center; 
+    font-size: 1.1rem; display: flex; align-items: center; justify-content: center; 
     border: 1px dashed rgba(255, 255, 255, 0.1); box-shadow: none;
 }
 
@@ -90,7 +101,7 @@ header[data-testid="stHeader"] { background: transparent; }
 .stButton > button {
     background: linear-gradient(90deg, #00F0FF, #FF00E5); 
     color: #000000; border-radius: 12px;
-    padding: 14px 28px; font-weight: 800; font-size: 1.05rem;
+    padding: 14px 28px; font-weight: 800; font-size: 1rem;
     border: none; width: 100%; transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(255, 0, 229, 0.4);
     text-transform: uppercase; letter-spacing: 0.05em;
@@ -100,12 +111,6 @@ header[data-testid="stHeader"] { background: transparent; }
     box-shadow: 0 8px 25px rgba(0, 240, 255, 0.6); 
     color: #000000;
 }
-
-/* Stats Footer */
-.stats-row { display: flex; justify-content: center; gap: 40px; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
-.stat-item { text-align: center; }
-.stat-val { font-size: 1.8rem; font-weight: 800; color: #00F0FF; text-shadow: 0 0 10px rgba(0,240,255,0.4); }
-.stat-lbl { font-size: 0.85rem; color: #A0AAB5; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -143,7 +148,7 @@ def load_model():
         st.stop()
 
 # ==========================================
-# 3. HEADER (Subtitle Removed)
+# 3. HEADER
 # ==========================================
 st.markdown("""
 <div class="hero">
@@ -207,7 +212,7 @@ def translate(text, to_amharic):
     return clean_text.replace("Ġ", " ").strip() or "[Empty response]"
 
 # ==========================================
-# 5. UI INTERACTION
+# 5. UI INTERACTION (SMART & SHORT)
 # ==========================================
 if "src_is_en" not in st.session_state:
     st.session_state.src_is_en = True
@@ -219,23 +224,26 @@ src_is_en = st.session_state.src_is_en
 src_lang = "English" if src_is_en else "አማርኛ (Amharic)"
 tgt_lang = "አማርኛ (Amharic)" if src_is_en else "English"
 
-st.markdown(f'''
-<div class="lang-row">
-    <div class="lang-box">{src_lang}</div>
-    <div class="lang-box">{tgt_lang}</div>
-</div>
-''', unsafe_allow_html=True)
-
-st.button("⇄ Swap Languages", on_click=toggle_lang, use_container_width=True)
+# Language Selector Row (Smart layout)
+col_lang1, col_swap, col_lang2 = st.columns([3, 1, 3], vertical_alignment="center")
+with col_lang1:
+    st.markdown(f'<div class="lang-box">{src_lang}</div>', unsafe_allow_html=True)
+with col_swap:
+    with st.container(key="swap_btn"):
+        st.button("⇄", on_click=toggle_lang, use_container_width=True)
+with col_lang2:
+    st.markdown(f'<div class="lang-box">{tgt_lang}</div>', unsafe_allow_html=True)
 
 st.write("")
-col1, col2 = st.columns(2, gap="large")
+
+# Translation Area
+col1, col2 = st.columns(2, gap="medium")
 
 with col1:
     user_input = st.text_area(
         "Input",
         value="The president spoke to the nation." if src_is_en else "ፕሬዝዳንቱ ለህዝቡ ተናገሩ።",
-        height=200,
+        height=180,
         max_chars=500,
     )
 
@@ -254,14 +262,3 @@ if st.button("Translate Now", use_container_width=True):
         with st.spinner("Translating..."):
             result = translate(user_input, to_amharic=src_is_en)
             render_output(result)
-
-# ==========================================
-# 6. FOOTER
-# ==========================================
-st.markdown("""
-<div class="stats-row">
-    <div class="stat-item"><div class="stat-val">60M</div><div class="stat-lbl">Parameters</div></div>
-    <div class="stat-item"><div class="stat-val">40k</div><div class="stat-lbl">Vocabulary</div></div>
-    <div class="stat-item"><div class="stat-val">3.2M</div><div class="stat-lbl">Data Pairs</div></div>
-</div>
-""", unsafe_allow_html=True)
