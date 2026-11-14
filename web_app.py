@@ -225,6 +225,58 @@ div[data-testid="stTextArea"] textarea::placeholder {
     border-color: var(--grad-start) !important;
     color: var(--grad-start) !important;
 }
+
+/* ---------- Colorful Translation History ---------- */
+.hist-title {
+    display: inline-block;
+    margin: 2.5rem 0 1rem 6px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+.hist-card {
+    padding: 16px 22px;
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background:
+        linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) padding-box,
+        linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) border-box;
+    box-shadow: 0 12px 28px -12px rgba(123, 97, 255, 0.40);
+    margin-bottom: 8px;
+}
+.hist-src { font-size: 0.95rem; color: #6A74B8; margin-bottom: 6px; overflow-wrap: anywhere; }
+.hist-tgt { font-size: 1.1rem; font-weight: 700; color: #1B1F5E; overflow-wrap: anywhere; }
+.hist-empty {
+    text-align: center;
+    padding: 28px;
+    color: #7C86C4;
+    font-weight: 500;
+    background: linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) !important;
+    border: 3px dashed #A99BFF !important;
+}
+div[class*="st-key-hist_"] .stButton > button:not([kind="primary"]) {
+    width: 56px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    border: none !important;
+    font-size: 1.4rem !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) !important;
+    box-shadow: 0 10px 22px -6px rgba(123, 97, 255, 0.55) !important;
+    transition: transform .3s ease !important;
+}
+div[class*="st-key-hist_"] .stButton > button:not([kind="primary"]):hover {
+    transform: rotate(-180deg) scale(1.1) !important;
+    color: #ffffff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -380,17 +432,6 @@ with st.sidebar:
     st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ---------- Translation History (click an item to bring it back) ----------
-    st.markdown('<div class="side-title">🕘 History</div>', unsafe_allow_html=True)
-    history = st.session_state.history
-    if not history:
-        st.caption("Your recent translations will appear here.")
-    else:
-        for i in reversed(range(max(0, len(history) - 5), len(history))):
-            label = history[i]["src"].strip().replace("\n", " ")
-            label = (label[:26] + "…") if len(label) > 26 else label
-            st.button(f"↺ {label}", key=f"hist_{i}", on_click=load_history, args=(i,), use_container_width=True)
-        st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
 
 # Main centered layout
 col1, col2, col3 = st.columns([1, 8, 1])
@@ -475,3 +516,24 @@ with col2:
                 st.rerun()
             except AttributeError:
                 st.experimental_rerun()
+
+    # ---------- Colorful Translation History (always visible) ----------
+    st.markdown('<div class="hist-title">🕘 Recent Translations</div>', unsafe_allow_html=True)
+    hist = st.session_state.history
+    if not hist:
+        st.markdown('<div class="hist-card hist-empty">✨ Your translations will appear here. Translate something to get started!</div>', unsafe_allow_html=True)
+    else:
+        for i in reversed(range(max(0, len(hist) - 5), len(hist))):
+            h_left, h_right = st.columns([9, 1], vertical_alignment="center")
+            with h_left:
+                st.markdown(
+                    f'<div class="hist-card"><div class="hist-src">{html.escape(hist[i]["src"])}</div>'
+                    f'<div class="hist-tgt">{html.escape(str(hist[i]["tgt"]))}</div></div>',
+                    unsafe_allow_html=True
+                )
+            with h_right:
+                with st.container(key=f"hist_{i}"):
+                    st.button("↺", key=f"rebtn_{i}", on_click=load_history, args=(i,), help="Use this translation again")
+        _, h_mid, _ = st.columns([2, 1, 2])
+        with h_mid:
+            st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
