@@ -334,8 +334,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        # 🚀 FIXED: Using the exact filename you uploaded
-        weights_path = hf_hub_download(repo_id=repo_id, filename="new_model_epoch1_batch_132000.pt", token=hf_token)
+        # 🚀 FIXED: Using the exact filename from your screenshot
+        weights_path = hf_hub_download(repo_id=repo_id, filename="nexus_nmt_final.pt", token=hf_token)
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
 
         if "model_state_dict" in checkpoint:
