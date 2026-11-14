@@ -277,6 +277,35 @@ div[class*="st-key-hist_"] .stButton > button:not([kind="primary"]):hover {
     transform: rotate(-180deg) scale(1.1) !important;
     color: #ffffff !important;
 }
+
+/* ---------- Colorful Clear Buttons ---------- */
+.st-key-clearbtn .stButton > button:not([kind="primary"]),
+.st-key-clrside .stButton > button:not([kind="primary"]),
+.st-key-clrhist .stButton > button:not([kind="primary"]) {
+    border: none !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #FF9E6D 0%, #FF6FB5 55%, #7B61FF 100%) !important;
+    box-shadow: 0 14px 28px -8px rgba(255, 111, 181, 0.55) !important;
+    transition: all .3s ease !important;
+}
+.st-key-clearbtn button *, .st-key-clrside button *, .st-key-clrhist button * {
+    color: #ffffff !important;
+}
+.st-key-clearbtn .stButton > button:not([kind="primary"]) {
+    height: 64px !important;
+    border-radius: 32px !important;
+    font-size: 1.1rem !important;
+}
+.st-key-clearbtn .stButton > button:not([kind="primary"]):hover,
+.st-key-clrside .stButton > button:not([kind="primary"]):hover,
+.st-key-clrhist .stButton > button:not([kind="primary"]):hover {
+    transform: translateY(-3px) scale(1.03);
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 20px 36px -8px rgba(255, 111, 181, 0.7) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -429,7 +458,8 @@ with st.sidebar:
             mime="text/plain",
             use_container_width=True
         )
-    st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
+    with st.container(key="clrside"):
+        st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -494,9 +524,12 @@ with col2:
     st.write("")
 
     # Button centered
-    _, mid, _ = st.columns([1, 2, 1])
+    _, mid, clr, _ = st.columns([0.9, 2, 1, 0.9])
     with mid:
         go = st.button("Translate", type="primary", use_container_width=True)
+    with clr:
+        with st.container(key="clearbtn"):
+            st.button("🗑 Clear", key="main_clear", on_click=clear_input, use_container_width=True)
 
     if go:
         if not user_input.strip():
@@ -536,4 +569,5 @@ with col2:
                     st.button("↺", key=f"rebtn_{i}", on_click=load_history, args=(i,), help="Use this translation again")
         _, h_mid, _ = st.columns([2, 1, 2])
         with h_mid:
-            st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
+            with st.container(key="clrhist"):
+                st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
