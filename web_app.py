@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import os
 import html
 import re
+import base64
 from huggingface_hub import hf_hub_download
 from tokenizers import Tokenizer
 from model import NexusNMT
@@ -96,6 +97,14 @@ header[data-testid="stHeader"] { background: transparent !important; }
 }
 .lang-pill .dot { width: 14px; height: 14px; border-radius: 50%; background: #078930 !important; box-shadow: 0 0 0 4px rgba(7, 137, 48, 0.18); }
 .lang-pill.target .dot { background: #DA121A !important; box-shadow: 0 0 0 4px rgba(218, 18, 26, 0.18); }
+.lang-pill .flag { width: 44px; height: 22px; border-radius: 5px; object-fit: cover; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25); }
+/* Oromia colors (red - green - red) appear automatically when Oromo text is detected */
+.lang-pill.om {
+    background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(90deg, #DA121A 0%, #DA121A 33%, #078930 33%, #078930 66%, #DA121A 66%, #DA121A 100%) border-box !important;
+    box-shadow: 0 12px 30px -10px rgba(218, 18, 26, 0.35);
+}
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.2rem; }
 
 /* ---------- Swap Button ---------- */
@@ -442,6 +451,43 @@ def load_history(i):
 def clear_history():
     st.session_state.history = []
 
+# ---------- Flags (drawn as small images) ----------
+UK_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="#012169"/>'
+          '<path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>'
+          '<path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2"/>'
+          '<path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/>'
+          '<path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg>')
+
+ET_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="10" fill="#078930"/>'
+          '<rect y="10" width="60" height="10" fill="#FCDD09"/><rect y="20" width="60" height="10" fill="#DA121A"/>'
+          '<circle cx="30" cy="15" r="7" fill="#0F47AF"/>'
+          '<polygon points="30,10 31.18,13.38 34.76,13.45 31.9,15.62 32.94,19.05 30,17 27.06,19.05 28.1,15.62 25.24,13.45 28.82,13.38" fill="#FCDD09"/></svg>')
+
+# Oromia flag: red - green - red, yellow rayed disc, green Odaa (sycamore) tree, small red star
+OM_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30"><rect width="60" height="30" fill="#DA121A"/>'
+          '<rect y="8" width="60" height="14" fill="#078930"/><circle cx="30" cy="15" r="9" fill="#FCDD09"/>'
+          '<circle cx="30" cy="15" r="12" fill="none" stroke="#FCDD09" stroke-width="2.6" stroke-dasharray="1.8 2.2"/>'
+          '<ellipse cx="30" cy="15.5" rx="5.5" ry="3.6" fill="#078930"/><rect x="29.2" y="16.5" width="1.6" height="5" fill="#078930"/>'
+          '<polygon points="30,7.9 30.44,9.19 31.81,9.21 30.71,10.03 31.12,11.34 30,10.55 28.88,11.34 29.29,10.03 28.19,9.21 29.56,9.19" fill="#DA121A"/></svg>')
+
+def flag_img(svg):
+    b64 = base64.b64encode(svg.encode("utf-8")).decode("ascii")
+    return f'<img class="flag" src="data:image/svg+xml;base64,{b64}" alt="flag">'
+
+# Common Afaan Oromoo words (Latin script) used to notice Oromo text automatically
+OROMO_WORDS = {"fi", "kan", "akka", "irra", "ni", "hin", "dha", "ta'e", "naannoo", "oromoo", "afaan",
+               "bakka", "waan", "yoo", "immoo", "isaa", "isaan", "kana", "sana", "nu", "ani", "ati",
+               "inni", "isheen", "galatoomaa", "akkam", "nagaa", "maaloo", "hojii", "mana", "bishaan",
+               "nyaata", "guyyaa", "barnoota", "magaalaa", "biyya", "jira", "jiru", "dhaa"}
+
+def looks_like_oromo(text):
+    if not text or re.search(r'[\u1200-\u137F]', text):
+        return False
+    words = re.findall(r"[a-z']+", text.lower())
+    hits = sum(1 for w in words if w in OROMO_WORDS)
+    ratio = hits / max(1, len(words))
+    return (hits >= 2 and ratio >= 0.25) or (hits >= 1 and ratio >= 0.5 and len(words) <= 3)
+
 # ==========================================
 # 5. MAIN LAYOUT
 # ==========================================
@@ -484,13 +530,26 @@ with col2:
     """, unsafe_allow_html=True)
 
     src_is_en = st.session_state.src == "en"
-    src_label = '<span class="dot"></span>English' if src_is_en else '<span class="dot"></span><span class="ge">አማርኛ</span>'
-    tgt_label = '<span class="dot"></span><span class="ge">አማርኛ</span>' if src_is_en else '<span class="dot"></span>English'
+    is_om = looks_like_oromo(st.session_state.get("text", ""))
+    FL_EN, FL_AM, FL_OM = flag_img(UK_SVG), flag_img(ET_SVG), flag_img(OM_SVG)
+    if is_om:
+        src_label = f'{FL_OM}Afaan Oromoo'
+    elif src_is_en:
+        src_label = f'{FL_EN}English'
+    else:
+        src_label = f'{FL_AM}<span class="ge">አማርኛ</span>'
+    tgt_label = f'{FL_AM}<span class="ge">አማርኛ</span>' if src_is_en else f'{FL_EN}English'
+
+    if is_om:
+        st.markdown(
+            "<style>.st-key-swap button { background: linear-gradient(135deg, #DA121A 0%, #078930 50%, #DA121A 100%) !important; }</style>",
+            unsafe_allow_html=True
+        )
 
     # Language selector row
     c1, c2, c3 = st.columns([4, 1.5, 4], vertical_alignment="center")
     with c1:
-        st.markdown(f'<div class="lang-pill">{src_label}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="lang-pill{" om" if is_om else ""}">{src_label}</div>', unsafe_allow_html=True)
     with c2:
         with st.container(key="swap"):
             st.button("⇄", on_click=swap_languages, help="Swap languages")
@@ -542,6 +601,8 @@ with col2:
     if go:
         if not user_input.strip():
             st.warning("Enter some text to translate.")
+        elif looks_like_oromo(user_input):
+            st.info("Afaan Oromoo was detected. This model translates English ⇄ Amharic only, so Oromo translation is not available yet.")
         else:
             has_ethiopic = bool(re.search(r'[\u1200-\u137F]', user_input))
             if has_ethiopic and src_is_en:
