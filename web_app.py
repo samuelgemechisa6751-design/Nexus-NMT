@@ -122,32 +122,40 @@ header[data-testid="stHeader"] { background: transparent !important; }
 /* ---------- Modern Input Panel (NEW COLORS) ---------- */
 .stTextArea label { display: none; }
 
-div[data-baseweb="textarea"],
-div[data-baseweb="base-input"] {
-    background: linear-gradient(145deg, #FFFFFF 0%, #EEF8FB 100%) !important;
-    border-radius: 24px !important;
+/* force a light background on EVERY layer of the text box (removes the black part) */
+div[data-testid="stTextArea"],
+div[data-testid="stTextArea"] div,
+div[data-testid="stTextArea"] [data-baseweb="textarea"],
+div[data-testid="stTextArea"] [data-baseweb="base-input"] {
+    background: #F2FAFD !important;
+    background-color: #F2FAFD !important;
 }
-div[data-baseweb="textarea"] {
+div[data-testid="stTextArea"] [data-baseweb="textarea"] {
     border: 2px solid #BFE6F2 !important;
+    border-radius: 24px !important;
     box-shadow: 0 15px 35px -12px rgba(0, 119, 182, 0.18) !important;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
-div[data-baseweb="textarea"]:focus-within {
+div[data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within {
     border-color: #00B4D8 !important;
     box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15),
                 0 15px 35px -12px rgba(0, 180, 216, 0.30) !important;
 }
 div[data-testid="stTextArea"] textarea {
-    background: transparent !important;
+    background: #F2FAFD !important;
+    background-color: #F2FAFD !important;
     font-size: 1.2rem !important;
     line-height: 1.7 !important;
     color: #023047 !important;
+    -webkit-text-fill-color: #023047 !important;
     caret-color: #0077B6 !important;
     padding: 28px !important;
     border-radius: 24px !important;
 }
 div[data-testid="stTextArea"] textarea::placeholder {
     color: #8FB3BF !important;
+    -webkit-text-fill-color: #8FB3BF !important;
 }
 
 /* ---------- Modern Output Panel (NEW COLORS) ---------- */
