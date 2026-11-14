@@ -2,3 +2,5 @@ streamlit
 torch
 tokenizers
 huggingface_hub
+numpy
+pandas
