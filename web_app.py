@@ -86,12 +86,16 @@ header[data-testid="stHeader"] { background: transparent !important; }
 .lang-pill {
     display: flex; align-items: center; justify-content: center; gap: 10px;
     height: 64px; border-radius: 20px; font-weight: 700; font-size: 1.1rem;
-    background: #ffffff !important; border: 1px solid var(--line);
+    /* white fill + Ethiopian flag border: green, yellow, red */
+    border: 3px solid transparent;
+    background:
+        linear-gradient(#ffffff, #ffffff) padding-box,
+        linear-gradient(90deg, #078930 0%, #078930 33%, #FCDD09 33%, #FCDD09 66%, #DA121A 66%, #DA121A 100%) border-box !important;
     color: var(--ink);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    box-shadow: 0 12px 30px -10px rgba(7, 137, 48, 0.30);
 }
-.lang-pill .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--grad-start) !important; }
-.lang-pill.target .dot { background: var(--grad-end) !important; }
+.lang-pill .dot { width: 14px; height: 14px; border-radius: 50%; background: #078930 !important; box-shadow: 0 0 0 4px rgba(7, 137, 48, 0.18); }
+.lang-pill.target .dot { background: #DA121A !important; box-shadow: 0 0 0 4px rgba(218, 18, 26, 0.18); }
 .lang-pill .ge { font-family: 'Noto Sans Ethiopic', sans-serif; font-size: 1.2rem; }
 
 /* ---------- Swap Button ---------- */
@@ -108,15 +112,19 @@ header[data-testid="stHeader"] { background: transparent !important; }
     font-size: 1.6rem !important;
     font-weight: 600 !important;
     color: #ffffff !important;
-    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
-    border: none !important;
-    box-shadow: 0 15px 30px -5px rgba(2, 48, 71, 0.3) !important;
+    background: linear-gradient(135deg, #078930 0%, #FCDD09 50%, #DA121A 100%) !important;
+    border: 3px solid #ffffff !important;
+    box-shadow: 0 15px 30px -5px rgba(7, 137, 48, 0.45) !important;
     transition: transform .3s ease, box-shadow .3s ease !important;
 }
-.st-key-swap button * { color: #ffffff !important; background-color: transparent !important; }
+.st-key-swap button * {
+    color: #ffffff !important;
+    background-color: transparent !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+}
 .st-key-swap button:hover {
     transform: rotate(180deg) scale(1.1) !important;
-    box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
+    box-shadow: 0 20px 40px -5px rgba(218, 18, 26, 0.45) !important;
 }
 
 /* ---------- Modern Input Panel (NEW COLORS) ---------- */
