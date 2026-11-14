@@ -57,9 +57,7 @@ header[data-testid="stHeader"] { background: transparent !important; }
     width: 85px; 
     height: 85px; 
     border-radius: 28px;
-    /* New Emerald Gradient */
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-mid) 50%, var(--grad-end) 100%) !important;
-    /* Soft blue glow shadow */
     box-shadow: 0 15px 40px -10px rgba(0, 119, 182, 0.4), 
                 0 0 20px rgba(0, 180, 216, 0.2) !important;
     position: relative;
@@ -79,7 +77,6 @@ header[data-testid="stHeader"] { background: transparent !important; }
     font-weight: 800; 
     font-size: 2.4rem; 
     letter-spacing: -0.05em; 
-    /* Deep rich color to match the logo */
     color: #023047 !important; 
     margin-top: 10px;
     text-align: center;
@@ -122,55 +119,45 @@ header[data-testid="stHeader"] { background: transparent !important; }
     box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
 }
 
-/* ---------- Modern Input Panel (CHANGED TO GRADIENT) ---------- */
-.stTextArea label { display: none; }
-div[data-testid="stTextArea"] > div > div > div > div > div {
-    /* Apply the gradient to the box */
-    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
-    border: none !important; 
-    border-radius: 24px !important;
-    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3) !important; 
-    transition: all 0.3s ease;
-}
-div[data-testid="stTextArea"] > div > div > div > div > div:focus-within {
-    box-shadow: 0 20px 45px -10px rgba(0, 180, 216, 0.5) !important;
-}
-div[data-testid="stTextArea"] textarea {
-    background-color: transparent !important;
-    font-size: 1.2rem !important; 
-    line-height: 1.7 !important; 
-    color: #ffffff !important; /* White text on gradient */
-    padding: 28px !important; 
-    border-radius: 24px !important;
-}
-div[data-testid="stTextArea"] textarea::placeholder { 
-    color: rgba(255, 255, 255, 0.7) !important; 
+/* ---------- The New Gradient Box Wrapper ---------- */
+.gradient-box {
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
+    padding: 24px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3);
+    margin-bottom: 20px;
 }
 
-/* ---------- Modern Output Panel (CHANGED TO GRADIENT) ---------- */
-.out-panel {
-    min-height: 240px; 
-    padding: 28px; 
-    border-radius: 24px; 
-    position: relative;
-    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+/* Force the text area inside to be transparent and text white */
+.gradient-box .stTextArea > div > div > div > div > div {
+    background-color: transparent !important;
+    border: none !important; 
+    box-shadow: none !important;
+}
+.gradient-box .stTextArea textarea {
+    background-color: transparent !important;
     color: #ffffff !important;
-    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3);
-    font-size: 1.2rem; 
-    line-height: 1.7; 
-    font-weight: 500; 
-    overflow-wrap: anywhere;
+    font-size: 1.2rem !important; 
+    line-height: 1.7 !important; 
+    padding: 10px !important; 
 }
-.out-panel.empty { 
-    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important; 
-    color: rgba(255, 255, 255, 0.7) !important; 
-    border: none !important;
-    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3) !important; 
-    font-weight: 400; 
+.gradient-box .stTextArea textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
 }
-.out-panel.fresh { animation: reveal .4s cubic-bezier(.2,.8,.2,1); }
-@keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 10px 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;}
+
+/* ---------- Output Text Styling inside Gradient ---------- */
+.out-text {
+    color: #ffffff;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    font-weight: 500;
+    padding: 10px;
+    min-height: 150px;
+}
+.out-text.empty {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+}
 
 /* ---------- Translate Button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
@@ -362,7 +349,7 @@ with st.sidebar:
 col1, col2, col3 = st.columns([1, 8, 1])
 
 with col2:
-    # Centered Brand (New Emerald Style)
+    # Centered Brand
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
@@ -392,28 +379,36 @@ with col2:
 
     with left:
         st.markdown('<p class="panel-label">Source Text</p>', unsafe_allow_html=True)
+        
+        # Wrap the text area in our new gradient box
+        st.markdown('<div class="gradient-box">', unsafe_allow_html=True)
         user_input = st.text_area(
             "Input text",
             key="text",
-            height=240,
+            height=180,
             max_chars=500,
             placeholder="Type your text here..." if src_is_en else "እዚህ ይጻፉ...",
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with right:
         st.markdown('<p class="panel-label">Translation</p>', unsafe_allow_html=True)
+        
+        # Wrap the output in our new gradient box
+        st.markdown('<div class="gradient-box">', unsafe_allow_html=True)
         out_slot = st.empty()
 
         def render_output():
             result = st.session_state.result
             if result:
-                cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
+                cls = "out-text"
                 out_slot.markdown(f'<div class="{cls}">{html.escape(str(result))}</div>', unsafe_allow_html=True)
             else:
-                out_slot.markdown('<div class="out-panel empty">Translation appears here...</div>', unsafe_allow_html=True)
+                out_slot.markdown('<div class="out-text empty">Translation appears here...</div>', unsafe_allow_html=True)
 
         render_output()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.write("")
     st.write("")
