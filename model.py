@@ -95,8 +95,10 @@ class NexusNMT(nn.Module):
         self.scale = math.sqrt(self.d_model)
     
     def generate_mask(self, src, tgt):
-        src_mask = (src != 0).unsqueeze(1).unsqueeze(2) 
-        tgt_mask = (tgt != 0).unsqueeze(1).unsqueeze(3)
+        # 🚀 HARDCODED FIX: pad_id is 1, not 0.
+        pad_id = 1 
+        src_mask = (src != pad_id).unsqueeze(1).unsqueeze(2) 
+        tgt_mask = (tgt != pad_id).unsqueeze(1).unsqueeze(3)
         nopeak = (1 - torch.triu(torch.ones(1, tgt.size(1), tgt.size(1)), diagonal=1)).bool().to(tgt.device)
         return src_mask, tgt_mask & nopeak
     
