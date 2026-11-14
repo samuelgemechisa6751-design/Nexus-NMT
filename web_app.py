@@ -75,30 +75,31 @@ div[data-testid="stTextArea"] textarea {
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. MODEL LOADING (CLEAN FILE)
+# 2. MODEL LOADING (NEW MODEL)
 # ==========================================
 hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
+    
+    # 🚀 POINTING TO THE NEW REPO
     repo_id = "samuel-nexus/nexus-nmt-v1-final"
 
     try:
+        # Load the new 40k tokenizer
         tokenizer_path = hf_hub_download(repo_id=repo_id, filename="tokenizer.json", token=hf_token)
         tokenizer = Tokenizer.from_file(tokenizer_path)
 
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        # 🚀 USING THE CLEAN 240MB FILE
-        weights_path = hf_hub_download(repo_id=repo_id, filename="nexus_nmt_132k.pt", token=hf_token)
+        # 🚀 USING THE NEW FILE NAME (Upload this after training finishes)
+        weights_path = hf_hub_download(repo_id=repo_id, filename="stable_best_model.pt", token=hf_token)
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
 
-        if "model_state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["model_state_dict"])
-        else:
-            model.load_state_dict(checkpoint)
+        # The stable training script saves the model.state_dict() directly
+        model.load_state_dict(checkpoint)
 
         model.eval()
         return model, tokenizer, device
