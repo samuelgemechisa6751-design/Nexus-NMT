@@ -343,6 +343,16 @@ def clear_input():
     st.session_state.result = None
     st.session_state.fresh = False
 
+def load_history(i):
+    item = st.session_state.history[i]
+    st.session_state.src = "am" if re.search(r'[\u1200-\u137F]', item["src"]) else "en"
+    st.session_state.text = item["src"]
+    st.session_state.result = item["tgt"]
+    st.session_state.fresh = False
+
+def clear_history():
+    st.session_state.history = []
+
 # ==========================================
 # 5. MAIN LAYOUT
 # ==========================================
@@ -369,6 +379,18 @@ with st.sidebar:
         )
     st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # ---------- Translation History (click an item to bring it back) ----------
+    st.markdown('<div class="side-title">🕘 History</div>', unsafe_allow_html=True)
+    history = st.session_state.history
+    if not history:
+        st.caption("Your recent translations will appear here.")
+    else:
+        for i in reversed(range(max(0, len(history) - 5), len(history))):
+            label = history[i]["src"].strip().replace("\n", " ")
+            label = (label[:26] + "…") if len(label) > 26 else label
+            st.button(f"↺ {label}", key=f"hist_{i}", on_click=load_history, args=(i,), use_container_width=True)
+        st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
 
 # Main centered layout
 col1, col2, col3 = st.columns([1, 8, 1])
