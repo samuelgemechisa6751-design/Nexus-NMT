@@ -122,29 +122,32 @@ header[data-testid="stHeader"] { background: transparent !important; }
     box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
 }
 
-/* ---------- Modern Input Panel ---------- */
+/* ---------- Modern Input Panel (CHANGED TO GRADIENT) ---------- */
 .stTextArea label { display: none; }
 div[data-testid="stTextArea"] > div > div > div > div > div {
-    background-color: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important; 
+    /* Apply the gradient to the box */
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
+    border: none !important; 
     border-radius: 24px !important;
-    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.1) !important; 
+    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3) !important; 
     transition: all 0.3s ease;
 }
 div[data-testid="stTextArea"] > div > div > div > div > div:focus-within {
-    border-color: rgba(0, 180, 216, 0.5) !important;
-    box-shadow: 0 15px 35px -10px rgba(0, 180, 216, 0.2) !important;
+    box-shadow: 0 20px 45px -10px rgba(0, 180, 216, 0.5) !important;
 }
 div[data-testid="stTextArea"] textarea {
-    background-color: #ffffff !important;
+    background-color: transparent !important;
     font-size: 1.2rem !important; 
     line-height: 1.7 !important; 
-    color: #0F2A2E !important; 
+    color: #ffffff !important; /* White text on gradient */
     padding: 28px !important; 
     border-radius: 24px !important;
 }
+div[data-testid="stTextArea"] textarea::placeholder { 
+    color: rgba(255, 255, 255, 0.7) !important; 
+}
 
-/* ---------- Modern Output Panel ---------- */
+/* ---------- Modern Output Panel (CHANGED TO GRADIENT) ---------- */
 .out-panel {
     min-height: 240px; 
     padding: 28px; 
@@ -159,10 +162,10 @@ div[data-testid="stTextArea"] textarea {
     overflow-wrap: anywhere;
 }
 .out-panel.empty { 
-    background: #ffffff !important; 
-    color: var(--muted) !important; 
-    border: 1px dashed rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 15px 35px -10px rgba(15, 42, 46, 0.05) !important; 
+    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important; 
+    color: rgba(255, 255, 255, 0.7) !important; 
+    border: none !important;
+    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3) !important; 
     font-weight: 400; 
 }
 .out-panel.fresh { animation: reveal .4s cubic-bezier(.2,.8,.2,1); }
