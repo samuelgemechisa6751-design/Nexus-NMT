@@ -27,6 +27,7 @@ st.markdown("""
     --grad-end: #023047;
 }
 
+/* ---------- Canvas ---------- */
 html, body, [class*="css"], .stApp, .stMarkdown, textarea, button {
     font-family: 'Sora', 'Noto Sans Ethiopic', sans-serif !important;
 }
@@ -41,17 +42,21 @@ header[data-testid="stHeader"] { background: transparent !important; }
 #MainMenu, footer, [data-testid="stToolbar"] { visibility: hidden; }
 .block-container { max-width: 1300px; padding-top: 3rem; padding-bottom: 3rem; }
 
+/* ---------- Brand ---------- */
 .brand { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 3rem; flex-direction: column; }
 .brand-mark { width: 85px; height: 85px; border-radius: 28px; background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-mid) 50%, var(--grad-end) 100%) !important; box-shadow: 0 15px 40px -10px rgba(0, 119, 182, 0.4); position: relative; display: flex; align-items: center; justify-content: center; }
 .brand-mark::after { content: ""; width: 34px; height: 34px; border-radius: 50%; background: #ffffff !important; }
 .brand-name { font-weight: 800; font-size: 2.4rem; letter-spacing: -0.05em; color: #023047 !important; margin-top: 10px; }
 
+/* ---------- Language Pills ---------- */
 .lang-pill { display: flex; align-items: center; justify-content: center; gap: 10px; height: 64px; border-radius: 20px; font-weight: 700; font-size: 1.1rem; border: 3px solid transparent; background: linear-gradient(#ffffff, #ffffff) padding-box, linear-gradient(90deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) border-box !important; color: var(--ink); box-shadow: 0 12px 30px -10px rgba(123, 97, 255, 0.30); }
 .lang-pill .dot { width: 14px; height: 14px; border-radius: 50%; background: #00B4D8 !important; }
 .lang-pill.target .dot { background: #7B61FF !important; }
 
+/* ---------- Swap Button ---------- */
 .st-key-swap button { width: 64px !important; height: 64px !important; min-height: 64px !important; padding: 0 !important; margin: 0 auto !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 50% !important; font-size: 1.6rem !important; color: #ffffff !important; background: linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) !important; border: 3px solid #ffffff !important; box-shadow: 0 15px 30px -5px rgba(123, 97, 255, 0.45) !important; }
 
+/* ---------- Text Area ---------- */
 .stTextArea label { display: none; }
 div[data-testid="stTextArea"] textarea {
     background: linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) padding-box, linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) border-box !important;
@@ -59,18 +64,28 @@ div[data-testid="stTextArea"] textarea {
     font-size: 1.2rem !important; color: #1B1F5E !important; padding: 26px !important;
 }
 
+/* ---------- Output Panel ---------- */
 .out-panel { min-height: 240px; padding: 28px; border-radius: 24px; background: linear-gradient(135deg, #00B4D8 0%, #4361EE 50%, #7B2FF7 100%) !important; border: 3px solid rgba(255, 255, 255, 0.35); color: #FFFFFF !important; box-shadow: 0 18px 40px -10px rgba(67, 97, 238, 0.55); font-size: 1.2rem; line-height: 1.7; font-weight: 500; }
 .out-panel.empty { background: linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) !important; color: #7C86C4 !important; border: 3px dashed #A99BFF !important; box-shadow: none !important; }
 
+/* ---------- Main Buttons ---------- */
 .stButton > button[kind="primary"] { height: 64px; border-radius: 32px !important; border: none !important; font-weight: 700; color: #ffffff !important; background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important; box-shadow: 0 15px 30px -5px rgba(2, 48, 71, 0.3) !important; }
 .panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 10px 6px; font-weight: 600; text-transform: uppercase; }
 
-.side-card { background: #ffffff !important; border: 1px solid var(--line); border-radius: 20px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-.side-title { font-size: 1rem; font-weight: 800; color: var(--grad-start); margin-bottom: 16px; text-transform: uppercase; }
-.side-text { font-size: 0.95rem; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; }
-.side-val { font-weight: 700; color: var(--ink); }
+/* ---------- History ---------- */
+.hist-title { display: inline-block; margin: 2.5rem 0 1rem 6px; font-size: 1.15rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; background: linear-gradient(90deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.hist-card { padding: 16px 22px; border-radius: 20px; border: 3px solid transparent; background: linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) padding-box, linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) border-box; box-shadow: 0 12px 28px -12px rgba(123, 97, 255, 0.40); margin-bottom: 8px; }
+.hist-src { font-size: 0.95rem; color: #6A74B8; margin-bottom: 6px; overflow-wrap: anywhere; }
+.hist-tgt { font-size: 1.1rem; font-weight: 700; color: #1B1F5E; overflow-wrap: anywhere; }
+.hist-empty { text-align: center; padding: 28px; color: #7C86C4; font-weight: 500; background: linear-gradient(135deg, #DDF6FB 0%, #E4EBFF 50%, #F4E6FF 100%) !important; border: 3px dashed #A99BFF !important; }
+div[class*="st-key-hist_"] .stButton > button:not([kind="primary"]) { width: 56px !important; height: 56px !important; min-height: 56px !important; padding: 0 !important; border-radius: 50% !important; border: none !important; font-size: 1.4rem !important; color: #ffffff !important; background: linear-gradient(135deg, #00B4D8 0%, #7B61FF 55%, #FF6FB5 100%) !important; box-shadow: 0 10px 22px -6px rgba(123, 97, 255, 0.55) !important; }
 
-.st-key-clearbtn button, .st-key-clrside button, .st-key-clrhist button { background: linear-gradient(135deg, #FF9E6D 0%, #FF6FB5 55%, #7B61FF 100%) !important; color: #ffffff !important; border: none !important; }
+/* ---------- Clear Buttons ---------- */
+.st-key-clearbtn .stButton > button:not([kind="primary"]), .st-key-clrside .stButton > button:not([kind="primary"]), .st-key-clrhist .stButton > button:not([kind="primary"]) {
+    border: none !important; color: #ffffff !important; font-weight: 700 !important; background: linear-gradient(135deg, #FF9E6D 0%, #FF6FB5 55%, #7B61FF 100%) !important; box-shadow: 0 14px 28px -8px rgba(255, 111, 181, 0.55) !important;
+}
+.st-key-clearbtn button *, .st-key-clrside button *, .st-key-clrhist button * { color: #ffffff !important; }
+.st-key-clearbtn .stButton > button:not([kind="primary"]) { height: 64px !important; border-radius: 32px !important; font-size: 1.1rem !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -82,28 +97,21 @@ hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    
-    # 🚀 POINTING TO THE NEW REPO
     repo_id = "samuel-nexus/nexus-nmt-v1-final"
 
     try:
-        # Load the new 40k tokenizer
         tokenizer_path = hf_hub_download(repo_id=repo_id, filename="tokenizer.json", token=hf_token)
         tokenizer = Tokenizer.from_file(tokenizer_path)
 
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        # 🚀 USING THE NEW FILE NAME (Upload this after training finishes)
         weights_path = hf_hub_download(repo_id=repo_id, filename="stable_best_model.pt", token=hf_token)
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
 
-        # The stable training script saves the model.state_dict() directly
         model.load_state_dict(checkpoint)
-
         model.eval()
         return model, tokenizer, device
-
     except Exception as e:
         st.error(f"Could not load the model: {e}")
         st.stop()
@@ -112,7 +120,7 @@ with st.spinner("Loading the model..."):
     model, tokenizer, device = load_model()
 
 # ==========================================
-# 3. TRANSLATION LOGIC (FIXED BEAM SEARCH)
+# 3. TRANSLATION LOGIC
 # ==========================================
 def translate(text, to_amharic):
     bos_id = tokenizer.token_to_id("<s>")
@@ -132,14 +140,11 @@ def translate(text, to_amharic):
 
     with torch.no_grad():
         beam = [(0.0, [bos_id])]
-        
         for step in range(max_len):
             new_beam = []
             for log_prob, tgt_ids in beam:
                 tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
                 logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
-
-                # Ban only structural tokens
                 logits[pad_id] = -float('inf')
                 logits[unk_id] = -float('inf')
                 logits[bos_id] = -float('inf')
@@ -148,50 +153,82 @@ def translate(text, to_amharic):
 
                 log_probs = F.log_softmax(logits, dim=-1)
                 topk_probs, topk_ids = torch.topk(log_probs, beam_width)
-
                 for i in range(beam_width):
                     new_token = topk_ids[i].item()
                     new_score = log_prob + topk_probs[i].item()
                     new_tgt_ids = tgt_ids + [new_token]
-                    
                     if new_token == eos_id:
-                        # Length normalization
-                        normalized_score = new_score / len(new_tgt_ids)
-                        new_beam.append((normalized_score, new_tgt_ids))
+                        new_beam.append((new_score / len(new_tgt_ids), new_tgt_ids))
                     else:
                         new_beam.append((new_score, new_tgt_ids))
 
             new_beam.sort(key=lambda x: x[0], reverse=True)
             beam = new_beam[:beam_width]
+            if all(b[1][-1] == eos_id for b in beam): break
 
-            if all(b[1][-1] == eos_id for b in beam):
-                break
-
-    best_ids = beam[0][1]
-    clean_text = tokenizer.decode(best_ids)
-    
+    clean_text = tokenizer.decode(beam[0][1])
     for tag in ["<s>", "</s>", "<pad>", "<unk>", "<2am>", "<2en>"]:
         clean_text = clean_text.replace(tag, "")
-    
-    clean_text = clean_text.replace("Ġ", " ").strip()
-    return clean_text if clean_text else "[Empty response]"
+    return clean_text.replace("Ġ", " ").strip() or "[Empty response]"
 
 # ==========================================
-# 4. STATE & LAYOUT
+# 4. STATE INITIALIZATION
 # ==========================================
+SAMPLES = {"en": "The president spoke to the nation.", "am": "ፕሬዝዳንቱ ለህዝቡ ተናገሩ።"}
+
 if "src" not in st.session_state: st.session_state.src = "en"
-if "text" not in st.session_state: st.session_state.text = "The president spoke to the nation."
+if "text" not in st.session_state: st.session_state.text = SAMPLES["en"]
 if "result" not in st.session_state: st.session_state.result = None
+if "fresh" not in st.session_state: st.session_state.fresh = False
+if "history" not in st.session_state: st.session_state.history = []
 
 def swap_languages():
+    previous = st.session_state.result
     st.session_state.src = "am" if st.session_state.src == "en" else "en"
+    st.session_state.text = previous if previous else SAMPLES[st.session_state.src]
+    st.session_state.result = None
+    st.session_state.fresh = False
+
+def clear_input():
     st.session_state.text = ""
     st.session_state.result = None
+    st.session_state.fresh = False
+
+def load_history(i):
+    item = st.session_state.history[i]
+    st.session_state.src = "am" if re.search(r'[\u1200-\u137F]', item["src"]) else "en"
+    st.session_state.text = item["src"]
+    st.session_state.result = item["tgt"]
+    st.session_state.fresh = False
+
+def clear_history():
+    st.session_state.history = []
+
+# ==========================================
+# 5. MAIN LAYOUT
+# ==========================================
+with st.sidebar:
+    st.markdown("""
+    <div class="side-card">
+        <div class="side-title">⚡️ AI Status</div>
+        <div class="side-text">Model <span class="side-val">Nexus-NMT</span></div>
+        <div class="side-text">Engine <span class="side-val" style="color: #00B4D8;">Active</span></div>
+        <div class="side-text">Languages <span class="side-val">2</span></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="side-card">', unsafe_allow_html=True)
+    st.markdown('<div class="side-title">🛠 Tools</div>', unsafe_allow_html=True)
+    if st.session_state.result:
+        st.download_button(label="📥 Download TXT", data=str(st.session_state.result), file_name="translation.txt", mime="text/plain", use_container_width=True)
+    with st.container(key="clrside"):
+        st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 8, 1])
 with col2:
     st.markdown('<div class="brand"><div class="brand-mark"></div><div class="brand-name">Nexus-NMT</div></div>', unsafe_allow_html=True)
-    
+
     src_is_en = st.session_state.src == "en"
     src_label = '<span class="dot"></span>English' if src_is_en else '<span class="dot"></span><span class="ge">አማርኛ</span>'
     tgt_label = '<span class="dot"></span><span class="ge">አማርኛ</span>' if src_is_en else '<span class="dot"></span>English'
@@ -221,8 +258,28 @@ with col2:
     _, mid, clr, _ = st.columns([0.9, 2, 1, 0.9])
     with mid:
         go = st.button("Translate", type="primary", use_container_width=True)
-    
+    with clr:
+        with st.container(key="clearbtn"): st.button("🗑 Clear", key="main_clear", on_click=clear_input, use_container_width=True)
+
     if go and user_input.strip():
         with st.spinner("Translating..."):
             st.session_state.result = translate(user_input, to_amharic=src_is_en)
+            st.session_state.fresh = True
+            st.session_state.history.append({"src": user_input, "tgt": st.session_state.result})
             st.rerun()
+
+    # ---------- History ----------
+    st.markdown('<div class="hist-title">🕘 Recent Translations</div>', unsafe_allow_html=True)
+    hist = st.session_state.history
+    if not hist:
+        st.markdown('<div class="hist-card hist-empty">✨ Your translations will appear here. Translate something to get started!</div>', unsafe_allow_html=True)
+    else:
+        for i in reversed(range(max(0, len(hist) - 5), len(hist))):
+            h_left, h_right = st.columns([9, 1], vertical_alignment="center")
+            with h_left:
+                st.markdown(f'<div class="hist-card"><div class="hist-src">{html.escape(hist[i]["src"])}</div><div class="hist-tgt">{html.escape(str(hist[i]["tgt"]))}</div></div>', unsafe_allow_html=True)
+            with h_right:
+                with st.container(key=f"hist_{i}"): st.button("↺", key=f"rebtn_{i}", on_click=load_history, args=(i,), help="Use again")
+        _, h_mid, _ = st.columns([2, 1, 2])
+        with h_mid:
+            with st.container(key="clrhist"): st.button("Clear history", key="clear_hist", on_click=clear_history, use_container_width=True)
