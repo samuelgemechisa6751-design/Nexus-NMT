@@ -22,7 +22,7 @@ st.markdown("""
     --muted: #6A7F84;
     --mist: #EAF1F2;
     --line: rgba(15,42,46,0.08);
-    
+
     /* NEW PALETTE: Midnight Emerald */
     --grad-start: #00B4D8; /* Bright Teal */
     --grad-mid: #0077B6;   /* Ocean Blue */
@@ -45,20 +45,20 @@ header[data-testid="stHeader"] { background: transparent !important; }
 .block-container { max-width: 1300px; padding-top: 3rem; padding-bottom: 3rem; }
 
 /* ---------- Modern Brand Logo & Name ---------- */
-.brand { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 16px; 
-    margin-bottom: 3rem; 
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 3rem;
     flex-direction: column;
 }
 .brand-mark {
-    width: 85px; 
-    height: 85px; 
+    width: 85px;
+    height: 85px;
     border-radius: 28px;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-mid) 50%, var(--grad-end) 100%) !important;
-    box-shadow: 0 15px 40px -10px rgba(0, 119, 182, 0.4), 
+    box-shadow: 0 15px 40px -10px rgba(0, 119, 182, 0.4),
                 0 0 20px rgba(0, 180, 216, 0.2) !important;
     position: relative;
     display: flex;
@@ -66,18 +66,18 @@ header[data-testid="stHeader"] { background: transparent !important; }
     justify-content: center;
 }
 .brand-mark::after {
-    content: ""; 
-    width: 34px; 
-    height: 34px; 
+    content: "";
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #ffffff !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.brand-name { 
-    font-weight: 800; 
-    font-size: 2.4rem; 
-    letter-spacing: -0.05em; 
-    color: #023047 !important; 
+.brand-name {
+    font-weight: 800;
+    font-size: 2.4rem;
+    letter-spacing: -0.05em;
+    color: #023047 !important;
     margin-top: 10px;
     text-align: center;
 }
@@ -96,17 +96,17 @@ header[data-testid="stHeader"] { background: transparent !important; }
 
 /* ---------- Swap Button ---------- */
 .st-key-swap button {
-    width: 64px !important; 
-    height: 64px !important; 
-    min-height: 64px !important; 
-    padding: 0 !important; 
-    margin: 0 auto !important; 
+    width: 64px !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 50% !important; 
-    font-size: 1.6rem !important; 
-    font-weight: 600 !important; 
+    border-radius: 50% !important;
+    font-size: 1.6rem !important;
+    font-weight: 600 !important;
     color: #ffffff !important;
     background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     border: none !important;
@@ -114,58 +114,75 @@ header[data-testid="stHeader"] { background: transparent !important; }
     transition: transform .3s ease, box-shadow .3s ease !important;
 }
 .st-key-swap button * { color: #ffffff !important; background-color: transparent !important; }
-.st-key-swap button:hover { 
-    transform: rotate(180deg) scale(1.1) !important; 
+.st-key-swap button:hover {
+    transform: rotate(180deg) scale(1.1) !important;
     box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
 }
 
-/* ---------- The New Gradient Box Wrapper ---------- */
-.gradient-box {
-    background: linear-gradient(135deg, var(--grad-start) 0%, var(--grad-end) 100%);
-    padding: 24px;
+/* ---------- Modern Input Panel (NEW COLORS) ---------- */
+.stTextArea label { display: none; }
+
+div[data-baseweb="textarea"],
+div[data-baseweb="base-input"] {
+    background: linear-gradient(145deg, #FFFFFF 0%, #EEF8FB 100%) !important;
+    border-radius: 24px !important;
+}
+div[data-baseweb="textarea"] {
+    border: 2px solid #BFE6F2 !important;
+    box-shadow: 0 15px 35px -12px rgba(0, 119, 182, 0.18) !important;
+    transition: all 0.3s ease;
+}
+div[data-baseweb="textarea"]:focus-within {
+    border-color: #00B4D8 !important;
+    box-shadow: 0 0 0 4px rgba(0, 180, 216, 0.15),
+                0 15px 35px -12px rgba(0, 180, 216, 0.30) !important;
+}
+div[data-testid="stTextArea"] textarea {
+    background: transparent !important;
+    font-size: 1.2rem !important;
+    line-height: 1.7 !important;
+    color: #023047 !important;
+    caret-color: #0077B6 !important;
+    padding: 28px !important;
+    border-radius: 24px !important;
+}
+div[data-testid="stTextArea"] textarea::placeholder {
+    color: #8FB3BF !important;
+}
+
+/* ---------- Modern Output Panel (NEW COLORS) ---------- */
+.out-panel {
+    min-height: 240px;
+    padding: 28px;
     border-radius: 24px;
-    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.3);
-    margin-bottom: 20px;
-}
-
-/* Force the text area inside to be transparent and text white */
-.gradient-box .stTextArea > div > div > div > div > div {
-    background-color: transparent !important;
-    border: none !important; 
-    box-shadow: none !important;
-}
-.gradient-box .stTextArea textarea {
-    background-color: transparent !important;
-    color: #ffffff !important;
-    font-size: 1.2rem !important; 
-    line-height: 1.7 !important; 
-    padding: 10px !important; 
-}
-.gradient-box .stTextArea textarea::placeholder {
-    color: rgba(255, 255, 255, 0.6) !important;
-}
-
-/* ---------- Output Text Styling inside Gradient ---------- */
-.out-text {
-    color: #ffffff;
+    position: relative;
+    background: linear-gradient(135deg, #0077B6 0%, #023047 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.10);
+    color: #FFFFFF !important;
+    box-shadow: 0 15px 35px -10px rgba(2, 48, 71, 0.45);
     font-size: 1.2rem;
     line-height: 1.7;
     font-weight: 500;
-    padding: 10px;
-    min-height: 150px;
+    overflow-wrap: anywhere;
 }
-.out-text.empty {
-    color: rgba(255, 255, 255, 0.6);
+.out-panel.empty {
+    background: linear-gradient(145deg, #F7FCFD 0%, #EAF6FA 100%) !important;
+    color: #7A98A1 !important;
+    border: 2px dashed #BFE6F2 !important;
+    box-shadow: 0 15px 35px -12px rgba(0, 119, 182, 0.10) !important;
     font-weight: 400;
 }
+.out-panel.fresh { animation: reveal .4s cubic-bezier(.2,.8,.2,1); }
+@keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.panel-label { font-size: 0.9rem; color: var(--muted); margin: 0 0 10px 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
 /* ---------- Translate Button ---------- */
 .stButton > button[kind="primary"], .stButton > button[data-testid="stBaseButton-primary"] {
-    height: 64px; 
-    border-radius: 32px !important; 
-    border: none !important; 
-    font-weight: 700; 
-    font-size: 1.2rem; 
+    height: 64px;
+    border-radius: 32px !important;
+    border: none !important;
+    font-weight: 700;
+    font-size: 1.2rem;
     color: #ffffff !important;
     background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%) !important;
     box-shadow: 0 15px 30px -5px rgba(2, 48, 71, 0.3) !important;
@@ -173,14 +190,14 @@ header[data-testid="stHeader"] { background: transparent !important; }
     letter-spacing: 0.02em;
 }
 .stButton > button[kind="primary"]:hover, .stButton > button[data-testid="stBaseButton-primary"]:hover {
-    transform: translateY(-3px) scale(1.02); 
-    box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important; 
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 40px -5px rgba(2, 48, 71, 0.5) !important;
 }
 
 /* ---------- Sidebar Cards ---------- */
 .side-card {
     background: #ffffff !important; border: 1px solid var(--line); border-radius: 20px;
-    padding: 24px; margin-bottom: 24px; 
+    padding: 24px; margin-bottom: 24px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 .side-title { font-size: 1rem; font-weight: 800; color: var(--grad-start); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; display:flex; align-items:center; gap:8px;}
@@ -264,23 +281,23 @@ def translate(text, to_amharic):
             for log_prob, tgt_ids in beam:
                 tgt_tensor = torch.tensor([tgt_ids], dtype=torch.long).to(device)
                 logits = model(src_tensor, tgt_tensor)[0, -1, :].clone()
-                
+
                 logits[pad_id] = -float('inf')
                 logits[unk_id] = -float('inf')
                 logits[bos_id] = -float('inf')
                 logits[tag_2am] = -float('inf')
                 logits[tag_2en] = -float('inf')
-                
+
                 if step < min_len: logits[eos_id] = -float('inf')
                 for token in set(tgt_ids):
                     if token not in [bos_id, eos_id]: logits[token] -= 15.0
 
                 log_probs = F.log_softmax(logits, dim=-1)
                 topk_probs, topk_ids = torch.topk(log_probs, beam_width)
-                
+
                 for i in range(beam_width):
                     new_beam.append((log_prob + topk_probs[i].item(), tgt_ids + [topk_ids[i].item()]))
-            
+
             new_beam.sort(key=lambda x: x[0], reverse=True)
             beam = new_beam[:beam_width]
             if all(b[1][-1] == eos_id for b in beam): break
@@ -325,15 +342,15 @@ def clear_input():
 with st.sidebar:
     st.markdown("""
     <div class="side-card">
-        <div class="side-title">⚡ AI Status</div>
+        <div class="side-title">⚡️ AI Status</div>
         <div class="side-text">Model <span class="side-val">Nexus-NMT</span></div>
         <div class="side-text">Engine <span class="side-val" style="color: #00B4D8;">Active</span></div>
         <div class="side-text">Languages <span class="side-val">2</span></div>
     </div>
     """, unsafe_allow_html=True)
-    
+
     st.markdown('<div class="side-card">', unsafe_allow_html=True)
-    st.markdown('<div class="side-title">🛠️ Tools</div>', unsafe_allow_html=True)
+    st.markdown('<div class="side-title">🛠 Tools</div>', unsafe_allow_html=True)
     if st.session_state.result:
         st.download_button(
             label="📥 Download TXT",
@@ -342,14 +359,14 @@ with st.sidebar:
             mime="text/plain",
             use_container_width=True
         )
-    st.button("🗑️ Clear Input", on_click=clear_input, use_container_width=True)
+    st.button("🗑 Clear Input", on_click=clear_input, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Main centered layout
 col1, col2, col3 = st.columns([1, 8, 1])
 
 with col2:
-    # Centered Brand
+    # Centered Brand (New Emerald Style)
     st.markdown("""
     <div class="brand">
         <div class="brand-mark"></div>
@@ -379,36 +396,28 @@ with col2:
 
     with left:
         st.markdown('<p class="panel-label">Source Text</p>', unsafe_allow_html=True)
-        
-        # Wrap the text area in our new gradient box
-        st.markdown('<div class="gradient-box">', unsafe_allow_html=True)
         user_input = st.text_area(
             "Input text",
             key="text",
-            height=180,
+            height=240,
             max_chars=500,
             placeholder="Type your text here..." if src_is_en else "እዚህ ይጻፉ...",
             label_visibility="collapsed"
         )
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with right:
         st.markdown('<p class="panel-label">Translation</p>', unsafe_allow_html=True)
-        
-        # Wrap the output in our new gradient box
-        st.markdown('<div class="gradient-box">', unsafe_allow_html=True)
         out_slot = st.empty()
 
         def render_output():
             result = st.session_state.result
             if result:
-                cls = "out-text"
+                cls = "out-panel fresh" if st.session_state.fresh else "out-panel"
                 out_slot.markdown(f'<div class="{cls}">{html.escape(str(result))}</div>', unsafe_allow_html=True)
             else:
-                out_slot.markdown('<div class="out-text empty">Translation appears here...</div>', unsafe_allow_html=True)
+                out_slot.markdown('<div class="out-panel empty">Translation appears here...</div>', unsafe_allow_html=True)
 
         render_output()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     st.write("")
     st.write("")
@@ -426,12 +435,12 @@ with col2:
             if has_ethiopic and src_is_en:
                 st.session_state.src = "am"
                 src_is_en = False
-            
+
             with st.spinner("Translating..."):
                 st.session_state.result = translate(user_input, to_amharic=src_is_en)
                 st.session_state.fresh = True
                 st.session_state.history.append({"src": user_input, "tgt": st.session_state.result})
-            
+
             try:
                 st.rerun()
             except AttributeError:
