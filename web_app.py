@@ -97,8 +97,10 @@ hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    repo_id = "samuel-nexus/nexus-nmt-v1-final"
-
+    
+    # 🔥 CHANGED THESE TWO LINES TO MATCH YOUR NEW UPLOAD 🔥
+    repo_id = "samuel-nexus/nexus-nmt-checkpoint-90000"
+    
     try:
         tokenizer_path = hf_hub_download(repo_id=repo_id, filename="tokenizer.json", token=hf_token)
         tokenizer = Tokenizer.from_file(tokenizer_path)
@@ -106,7 +108,8 @@ def load_model():
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        weights_path = hf_hub_download(repo_id=repo_id, filename="stable_best_model.pt", token=hf_token)
+        # 🔥 CHANGED FILENAME TO MATCH YOUR UPLOAD 🔥
+        weights_path = hf_hub_download(repo_id=repo_id, filename="checkpoint_step_90000.pt", token=hf_token)
         checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
 
         model.load_state_dict(checkpoint)
