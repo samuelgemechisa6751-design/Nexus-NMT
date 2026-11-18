@@ -90,29 +90,34 @@ div[class*="st-key-hist_"] .stButton > button:not([kind="primary"]) { width: 56p
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. MODEL LOADING (NEW MODEL)
+# 2. MODEL LOADING (FIXED)
 # ==========================================
 hf_token = st.secrets.get("HF_TOKEN", os.environ.get("HF_TOKEN", None))
 
 @st.cache_resource
 def load_model():
     device = torch.device("cpu")
-    
-    # 🔥 CHANGED THESE TWO LINES TO MATCH YOUR NEW UPLOAD 🔥
     repo_id = "samuel-nexus/nexus-nmt-checkpoint-90000"
     
     try:
+        # 1. Load Tokenizer
         tokenizer_path = hf_hub_download(repo_id=repo_id, filename="tokenizer.json", token=hf_token)
         tokenizer = Tokenizer.from_file(tokenizer_path)
 
+        # 2. Build Model
         vocab_size = tokenizer.get_vocab_size()
         model = NexusNMT(src_vocab_size=vocab_size, tgt_vocab_size=vocab_size).to(device)
 
-        # 🔥 CHANGED FILENAME TO MATCH YOUR UPLOAD 🔥
+        # 3. Load Weights (FIXED)
         weights_path = hf_hub_download(repo_id=repo_id, filename="checkpoint_step_90000.pt", token=hf_token)
-        checkpoint = torch.load(weights_path, map_location="cpu", weights_only=True)
+        checkpoint = torch.load(weights_path, map_location="cpu", weights_only=False)
 
-        model.load_state_dict(checkpoint)
+        # Extract just the model weights from the checkpoint dictionary
+        if "model_state_dict" in checkpoint:
+            model.load_state_dict(checkpoint["model_state_dict"])
+        else:
+            model.load_state_dict(checkpoint)
+
         model.eval()
         return model, tokenizer, device
     except Exception as e:
